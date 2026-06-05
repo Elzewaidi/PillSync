@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
 
 class RefillReminderScreen extends StatefulWidget {
-  static const String routeName = 'refill_reminder_screen';
+  static const String routeName = '/refill-reminder';
+
+  const RefillReminderScreen({super.key});
 
   @override
   State<RefillReminderScreen> createState() => _RefillReminderScreenState();
@@ -24,103 +29,92 @@ class _RefillReminderScreenState extends State<RefillReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.close, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
         ),
-        title: const Text(
+        title: Text(
           "Refill Reminder",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppStyles.font18SemiBoldBlack,
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Column(
-              children: [
-                _buildLabel("Medication"),
-                _buildDropdown(
-                  "Select Medication",
-                  ["Aspirin", "Ibuprofen", "Vitamin D"],
-                  _selectedMedication,
-                  (val) => setState(() => _selectedMedication = val),
-                ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLabel("Medication"),
+              _buildDropdown(
+                "Select Medication",
+                ["Panadol", "Aspirin", "Ibuprofen"],
+                _selectedMedication,
+                (val) => setState(() => _selectedMedication = val),
+              ),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                _buildLabel("Remaining Quantity"),
-                _buildTextField("e.g., 15", _quantityController),
+              _buildLabel("Remaining Quantity"),
+              _buildTextField("e.g., 15", _quantityController),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                _buildLabel("Days Before Refill"),
-                _buildTextField("e.g., 5", _daysController),
+              _buildLabel("Days Before Refill"),
+              _buildTextField("e.g., 5", _daysController),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-                _buildLabel("Reminder Frequency"),
-                _buildDropdown(
-                  "Once",
-                  ["Once", "Daily", "Weekly"],
-                  _selectedFrequency,
-                  (val) => setState(() => _selectedFrequency = val),
-                ),
+              _buildLabel("Reminder Frequency"),
+              _buildDropdown(
+                "Once",
+                ["Once", "Daily", "Weekly"],
+                _selectedFrequency,
+                (val) => setState(() => _selectedFrequency = val),
+              ),
 
-                const Spacer(),
+              const SizedBox(height: 40),
 
-                ElevatedButton(
-                  onPressed: () {
-                    print("Medication: $_selectedMedication");
-                    print("Quantity: ${_quantityController.text}");
-                    print("Days: ${_daysController.text}");
-                    print("Freq: $_selectedFrequency");
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00B4D8),
-                    minimumSize: const Size(double.infinity, 55),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 0,
+              ElevatedButton(
+                onPressed: () {
+                  context.pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  minimumSize: const Size(double.infinity, 55),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  child: const Text(
-                    "Save Reminder",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  elevation: 0,
+                ),
+                child: const Text(
+                  "Save Reminder",
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+              ),
+            ],
+          )
         ),
       ),
     );
   }
 
-  Widget _buildLabel(String text) {
-    return Container(
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.only(bottom: 8),
+  Widget _buildLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4),
       child: Text(
-        text,
+        label,
         style: const TextStyle(
-          fontSize: 13,
-          color: Colors.grey,
+          color: AppColors.textSecondary,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -131,53 +125,46 @@ class _RefillReminderScreenState extends State<RefillReminderScreen> {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
+      style: const TextStyle(color: AppColors.textPrimary),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
+        hintStyle: const TextStyle(color: AppColors.textHint),
         filled: true,
-        fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
-        ),
+        fillColor: AppColors.surface,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFECEFF1)),
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFECEFF1)),
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF00B4D8)),
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
       ),
     );
   }
 
-  Widget _buildDropdown(
-    String hint,
-    List<String> items,
-    String? selectedValue,
-    Function(String?) onChanged,
-  ) {
+  Widget _buildDropdown(String hint, List<String> items, String? value, Function(String?) onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFECEFF1)),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.grey200),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           isExpanded: true,
-          hint: Text(
-            hint,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-          value: selectedValue,
+          hint: Text(hint, style: const TextStyle(color: AppColors.textHint)),
+          value: value,
           items: items.map((String item) {
-            return DropdownMenuItem<String>(value: item, child: Text(item));
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item, style: const TextStyle(color: AppColors.textPrimary)),
+            );
           }).toList(),
           onChanged: onChanged,
         ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ScanPrescriptionScreen extends StatelessWidget {
-  static const String routeName = 'scan_prescription_screen';
+  static const String routeName = '/scan';
 
   @override
   Widget build(BuildContext context) {

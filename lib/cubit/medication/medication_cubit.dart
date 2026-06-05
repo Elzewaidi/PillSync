@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pillsync/api/medication_repository.dart';
 import 'package:pillsync/model/medication_model.dart';
 import 'medication_state.dart';

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pillsync/custom_widgets/custom_text_form_field.dart';
+import 'package:pillsync/screens/auth/password/OTP_forget_pass_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
-import '../../../utils/app_colors.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  static const String routeName = 'forgot_password_screen';
+  static const String routeName = '/forget-password';
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +18,9 @@ class ForgotPasswordScreen extends StatelessWidget {
         elevation: 0,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () {
-            Navigator.pop(context);
+            context.pop();
           },
         ),
       ),
@@ -30,16 +33,15 @@ class ForgotPasswordScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Image.asset(AppAssets.logo_forget, height: 200),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Forgot Password?',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                  style: AppStyles.font24BoldBlack,
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Enter your email to receive a verification code',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16, color: Colors.grey, height: 1.5),
+                  style: AppStyles.font16MediumGrey,
                 ),
                 const SizedBox(height: 40),
                 const CustomTextFormField(
@@ -51,9 +53,9 @@ class ForgotPasswordScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => context.push(OTPScreen.routeName),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkBlue,
+                      backgroundColor: AppColors.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

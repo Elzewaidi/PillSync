@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
 
 class MissedAlertsScreen extends StatefulWidget {
-  static const String routeName = 'missed_alerts';
+  static const String routeName = '/missed-alerts';
+
+  const MissedAlertsScreen({super.key});
 
   @override
   State<MissedAlertsScreen> createState() => _MissedAlertsScreenState();
@@ -18,18 +23,18 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
         ),
-        title: const Text(
+        title: Text(
           "Missed Medication Alerts",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          style: AppStyles.font18SemiBoldBlack,
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -88,8 +93,11 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(color: AppColors.cardShadow, blurRadius: 10),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -99,76 +107,80 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
+              const SizedBox(height: 2),
               Text(
                 sub,
-                style: const TextStyle(color: Colors.grey, fontSize: 12),
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ],
           ),
           Switch(
             value: value,
             onChanged: onChange,
-            activeColor: const Color(0xFF00B4D8),
+            activeColor: AppColors.primary,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInputLabel(String label) => Container(
-    alignment: Alignment.centerLeft,
-    padding: const EdgeInsets.only(bottom: 8),
-    child: Text(
-      label,
-      style: const TextStyle(
-        color: Color(0xFF5D6778),
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  );
-
-  Widget _buildCustomTextField(
-    TextEditingController ctrl,
-    String hint, {
-    bool isSmall = false,
-  }) {
-    return TextField(
-      controller: ctrl,
-      maxLines: isSmall ? 2 : 1,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFECEFF1)),
+  Widget _buildInputLabel(String label) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 5, bottom: 8),
+        child: Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textPrimary),
         ),
       ),
     );
   }
 
-  Widget _buildReadOnlyField(String sub, String val) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(sub, style: const TextStyle(color: Colors.grey, fontSize: 12)),
-        const SizedBox(height: 8),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFECEFF1)),
+  Widget _buildReadOnlyField(String sub, String value) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: AppColors.grey100,
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(            child: Text(
+              sub,
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            ),
           ),
-          child: Text(val),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.primary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomTextField(TextEditingController ctrl, String hint, {bool isSmall = false}) {
+    return TextField(
+      controller: ctrl,
+      maxLines: isSmall ? 1 : 2,
+      style: const TextStyle(color: AppColors.textPrimary),
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: AppColors.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
-      ],
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: AppColors.grey200),
+        ),
+      ),
     );
   }
 
@@ -177,49 +189,44 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFFE3F2FD),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFFBBDEFB)),
+        color: AppColors.error.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.error.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Preview",
-            style: TextStyle(
-              color: Color(0xFF1976D2),
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: AppColors.error),
+              const SizedBox(width: 10),
+              Text(
+                "Preview Alert",
+                style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           Text(
-            "Alert Message:\n\"${messageController.text}\"",
-            style: const TextStyle(fontSize: 13),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            "Motivational Message:\n\"Taking medications on time improves effectiveness\"",
-            style: TextStyle(fontSize: 13),
+            messageController.text,
+            style: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSaveButton(String txt) {
+  Widget _buildSaveButton(String text) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () => context.pop(),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF00B4D8),
+        backgroundColor: AppColors.primary,
         minimumSize: const Size(double.infinity, 55),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
       child: Text(
-        txt,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
+        text,
+        style: const TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
       ),
     );
   }

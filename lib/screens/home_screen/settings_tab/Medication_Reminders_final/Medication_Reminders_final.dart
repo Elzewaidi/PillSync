@@ -4,10 +4,11 @@ import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/model/medication_model.dart';
 import 'package:pillsync/utils/app_assets.dart';
-import '../../../../utils/app_colors.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
 class MedicationRemindersScreen extends StatefulWidget {
-  static const String routeName = 'medication_reminders_screen';
+  static const String routeName = '/medication-reminders';
 
   @override
   State<MedicationRemindersScreen> createState() =>
@@ -18,22 +19,22 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
         ),
         title: const Text(
           "Medication Reminders",
           style: TextStyle(
-            color: AppColors.darkBlack,
+            color: AppColors.textPrimary,
             fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: BlocBuilder<MedicationCubit, MedicationState>(
@@ -59,12 +60,12 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                 itemCount: reminders.length + 1,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    return const Padding(
-                      padding: EdgeInsets.only(bottom: 15),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
                       child: Text(
                         "Active Reminders",
                         style: TextStyle(
-                          color: AppColors.darkBlue,
+                          color: AppColors.primary,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -88,18 +89,18 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                   label: const Text(
                     "Add Reminder",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF00B4D8),
+                    backgroundColor: AppColors.primary,
                     minimumSize: const Size(double.infinity, 55),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                     elevation: 5,
-                    shadowColor: const Color(0xFF00B4D8).withOpacity(0.4),
+                    shadowColor: AppColors.primary.withOpacity(0.4),
                   ),
                 ),
               ),
@@ -115,11 +116,11 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: AppColors.cardShadow,
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -130,7 +131,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFFE0F7FA),
+              color: AppColors.info.withOpacity(0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Image.asset(AppAssets.med_reminders, width: 28, height: 28),
@@ -145,13 +146,14 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 17,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   "${med.time} | Daily",
                   style: const TextStyle(
-                    color: AppColors.darkGray,
+                    color: AppColors.textSecondary,
                     fontSize: 13,
                   ),
                 ),
@@ -163,7 +165,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
             onChanged: (newValue) {
               context.read<MedicationCubit>().toggleReminder(med);
             },
-            activeColor: AppColors.whiteBlue,
+            activeColor: AppColors.primary,
           ),
         ],
       ),

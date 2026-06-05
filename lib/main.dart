@@ -21,8 +21,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/api/medication_repository.dart';
 
+import 'package:pillsync/utils/di.dart';
+
+import 'package:pillsync/utils/app_routes.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  setupDI();
   runApp(const MyApp());
 }
 
@@ -39,7 +44,7 @@ class MyApp extends StatelessWidget {
           context.read<MedicationRepository>(),
         )
           ..loadMedications(),
-        child: MaterialApp(
+        child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'PillSync',
           theme: ThemeData(
@@ -58,29 +63,7 @@ class MyApp extends StatelessWidget {
               iconTheme: IconThemeData(color: Colors.black),
             ),
           ),
-          initialRoute: SplashScreen.routeName,
-          routes: {
-            SplashScreen.routeName: (context) => const SplashScreen(),
-            IntroScreen.routeName: (context) => const IntroScreen(),
-            WelcomeScreen.routeName: (context) => const WelcomeScreen(),
-            LoginScreen.routeName: (context) => LoginScreen(),
-            RegisterScreen.routeName: (context) => RegisterScreen(),
-            ForgotPasswordScreen.routeName: (context) => ForgotPasswordScreen(),
-            OTPScreen.routeName: (context) => OTPScreen(),
-            HomeScreen.routeName: (context) => HomeScreen(),
-            PatientScheduleScreen.routeName: (context) =>
-                PatientScheduleScreen(),
-            MedsTabContent.routeName: (context) => MedsTabContent(),
-            AddMedicationScreen.routeName: (context) => AddMedicationScreen(),
-            ScanPrescriptionScreen.routeName: (context) =>
-                ScanPrescriptionScreen(),
-            ManualEntryScreen.routeName: (context) => ManualEntryScreen(),
-            SettingsScreen.routeName: (context) => SettingsScreen(),
-            MedicationRemindersScreen.routeName: (context) =>
-                MedicationRemindersScreen(),
-            RefillReminderScreen.routeName: (context) => RefillReminderScreen(),
-            MissedAlertsScreen.routeName: (context) => MissedAlertsScreen(),
-          },
+          routerConfig: AppRoutes.router,
         ),
       ),
     );

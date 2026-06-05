@@ -1,98 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pillsync/utils/app_colors.dart';
-
-import '../../../utils/app_assets.dart';
+import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/utils/app_styles.dart';
 
 class OTPScreen extends StatelessWidget {
   const OTPScreen({super.key});
-
-  static const String routeName = 'otp_screen';
-
+  static const String routeName = '/otp';
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back)),
+        backgroundColor: AppColors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => context.pop(), 
+          icon: const Icon(Icons.arrow_back, color: AppColors.black)
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset(AppAssets.logo_forget),
-            const SizedBox(height: 8),
-            const Text(
-              'Enter OTP',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: const Text(
-                'We sent a code to email@gmail.com',
-                style: TextStyle(fontSize: 16, color: AppColors.darkGray),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Image.asset(AppAssets.logo_forget, height: 200),
+              const SizedBox(height: 8),
+              Text(
+                'Enter OTP',
+                style: AppStyles.font24BoldBlack,
               ),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: const Text(
-                'Enter 6-digit code',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.darkBlue,
+              const SizedBox(height: 10),
+              Center(
+                child: Text(
+                  'We sent a code to email@gmail.com',
+                  style: AppStyles.font16MediumGrey,
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) {
-                return SizedBox(
-                  width: 50,
-                  child: TextField(
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(border: OutlineInputBorder()),
-                  ),
-                );
-              }),
-            ),
-            const SizedBox(height: 10),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'Resend Code',
-                style: TextStyle(
-                  color: AppColors.whiteBlue,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
+              const SizedBox(height: 30),
+              Center(
+                child: Text(
+                  'Enter 6-digit code',
+                  style: AppStyles.font14MediumGrey,
                 ),
               ),
-            ),
-
-            const SizedBox(height: 10),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(6, (index) {
+                  return SizedBox(
+                    width: 50,
+                    child: TextField(
+                      textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.grey300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: AppColors.primary),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 10),
+              TextButton(
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.whiteBlue,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                child: Text(
+                  'Resend Code',
+                  style: AppStyles.font16MediumGrey.copyWith(color: AppColors.primary),
                 ),
-                child: const Text(
-                  'Verify OTP',
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+              ),
+  
+              const SizedBox(height: 10),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Verify OTP',
+                    style: TextStyle(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

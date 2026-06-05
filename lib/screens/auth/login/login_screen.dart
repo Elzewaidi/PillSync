@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pillsync/custom_widgets/custom_text_form_field.dart';
 import 'package:pillsync/screens/auth/password/forget_password.dart';
 import 'package:pillsync/screens/auth/register/register_screen.dart';
 import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
-import '../../../utils/app_assets.dart';
-import '../../../utils/app_colors.dart';
+import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/utils/app_colors.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const String routeName = 'login_screen';
+  static const String routeName = '/login';
+
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -78,7 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     icon: Icon(
                       isObscure ? Icons.visibility_off : Icons.visibility,
-                      color: AppColors.darkBlue,
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
@@ -87,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Checkbox(
                       value: isRememberMe,
-                      activeColor: AppColors.darkBlue,
+                      activeColor: AppColors.primary,
                       onChanged: (value) {
                         setState(() {
                           isRememberMe = value!;
@@ -97,18 +100,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text(
                       "Remember me",
                       style: TextStyle(
-                          color: AppColors.whiteGray, fontSize: 14),
+                          color: AppColors.textSecondary, fontSize: 14),
                     ),
                     const Spacer(),
                     TextButton(
-                      onPressed: () {
-                        Navigator.pushNamed(
-                            context, ForgotPasswordScreen.routeName);
-                      },
+                      onPressed: () => context.push(ForgotPasswordScreen.routeName),
                       child: const Text(
                         "Forget Password?",
                         style: TextStyle(
-                          color: AppColors.darkBlue,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -121,12 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
-                        Navigator.pushReplacementNamed(
-                            context, HomeScreen.routeName);
+                        context.go(HomeScreen.routeName);
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkBlue,
+                      backgroundColor: AppColors.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -148,17 +147,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     const Text('Don\'t have an account?'),
                     TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) =>
-                              RegisterScreen()),
-                        );
-                      },
+                      onPressed: () => context.push(RegisterScreen.routeName),
                       child: const Text(
                         "Sign Up",
                         style: TextStyle(
-                          color: AppColors.whiteBlue,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

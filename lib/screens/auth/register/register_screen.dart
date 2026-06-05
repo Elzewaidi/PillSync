@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pillsync/custom_widgets/custom_text_form_field.dart';
 import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
 
 class RegisterScreen extends StatefulWidget {
-  static const String routeName = 'register_screen';
+  static const String routeName = '/register';
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -142,12 +143,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           agreeToTerms = value!;
                         });
                       },
-                      activeColor: AppColors.darkBlue,
+                      activeColor: AppColors.primary,
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'I agree to the Terms & Conditions and Privacy Policy',
-                        style: TextStyle(fontSize: 14, color: AppColors.black),
+                        style: TextStyle(fontSize: 14, color: AppColors.textPrimary),
                       ),
                     ),
                   ],
@@ -156,18 +157,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'Already have an account? ',
-                      style: TextStyle(fontSize: 16, color: AppColors.darkGray),
+                      style: TextStyle(fontSize: 16, color: AppColors.textSecondary),
                     ),
                     InkWell(
-                      onTap: () => Navigator.pop(context),
-                      child: const Text(
+                      onTap: () => context.pop(),
+                      child: Text(
                         'Login',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.whiteBlue,
+                          color: AppColors.primary,
                         ),
                       ),
                     ),
@@ -187,15 +188,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           );
                           return;
                         }
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          HomeScreen.routeName,
-                          (route) => false,
-                        );
+                        context.go(HomeScreen.routeName);
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.darkBlue,
+                      backgroundColor: AppColors.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -213,16 +210,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
                 Row(
-                  children: const [
-                    Expanded(child: Divider()),
+                  children: [
+                    const Expanded(child: Divider()),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
                         'Or sign up with',
-                        style: TextStyle(color: AppColors.whiteGray),
+                        style: TextStyle(color: AppColors.textHint),
                       ),
                     ),
-                    Expanded(child: Divider()),
+                    const Expanded(child: Divider()),
                   ],
                 ),
                 const SizedBox(height: 24),

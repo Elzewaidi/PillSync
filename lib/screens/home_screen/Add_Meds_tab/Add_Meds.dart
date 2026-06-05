@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pillsync/screens/home_screen/Add_Meds_tab/scan_screen/scan_screen.dart';
-
-import 'manual_screen/manual_screen.dart';
+import 'package:pillsync/screens/home_screen/Add_Meds_tab/manual_screen/manual_screen.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
 
 class AddMedicationScreen extends StatelessWidget {
-  static const String routeName = 'add_medication_screen';
+  static const String routeName = '/add-meds';
+
+  const AddMedicationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.close, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
         ),
         title: Text(
           "Add Medication",
-          style: TextStyle(color: Colors.black87, fontSize: 18),
+          style: AppStyles.font18SemiBoldBlack,
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: Padding(
@@ -30,13 +34,9 @@ class AddMedicationScreen extends StatelessWidget {
           children: [
             Text(
               "How would you like to add your medication?",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.black54,
-              ),
+              style: AppStyles.font16MediumGrey,
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             // خيار الـ Scan
             _buildOptionCard(
@@ -44,26 +44,18 @@ class AddMedicationScreen extends StatelessWidget {
               title: "Scan Prescription",
               subtitle: "Use your camera to scan your prescription",
               icon: Icons.camera_alt_outlined,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ScanPrescriptionScreen(),
-                ),
-              ),
+              onTap: () => context.push(ScanPrescriptionScreen.routeName),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // خيار الـ Manual
             _buildOptionCard(
               context,
-              title: "Enter Details Manually",
-              subtitle: "Manually enter medication details",
+              title: "Manual Entry",
+              subtitle: "Type in your medication details manually",
               icon: Icons.edit_note_outlined,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ManualEntryScreen()),
-              ),
+              onTap: () => context.push(ManualEntryScreen.routeName),
             ),
           ],
         ),
@@ -80,47 +72,56 @@ class AddMedicationScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.grey.shade100),
-          color: Colors.white,
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.grey200),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: AppColors.cardShadow,
               blurRadius: 10,
-              offset: Offset(0, 5),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Color(0xFFE0F7FA),
-                borderRadius: BorderRadius.circular(12),
+                color: AppColors.primary.withOpacity(0.1),
+                shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: Color(0xFF00BCD4)),
+              child: Icon(icon, color: AppColors.primary, size: 28),
             ),
-            SizedBox(width: 15),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+            const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textHint),
           ],
         ),
       ),

@@ -1,29 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
+import 'package:pillsync/utils/app_assets.dart';
 
 class EditProfileScreen extends StatefulWidget {
+  static const String routeName = '/edit-profile';
+
+  const EditProfileScreen({super.key});
+
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final nameCtrl = TextEditingController(text: "John Doe");
-  final emailCtrl = TextEditingController(text: "john.doe@example.com");
+  final nameCtrl = TextEditingController(text: "Mohamed Elzewaidi");
+  final emailCtrl = TextEditingController(text: "zewaidi@gmail.com");
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
         ),
-        title: const Text(
+        title: Text(
           "Edit Profile",
-          style: TextStyle(color: Colors.black),
+          style: AppStyles.font18SemiBoldBlack,
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -35,31 +43,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 const CircleAvatar(
                   radius: 60,
-                  backgroundImage: NetworkImage(
-                    "https://via.placeholder.com/150",
-                  ),
+                  backgroundImage: AssetImage(AppAssets.zewaidi),
                 ),
                 CircleAvatar(
-                  backgroundColor: Colors.blue,
+                  backgroundColor: AppColors.primary,
                   radius: 18,
                   child: IconButton(
-                    icon: const Icon(Icons.edit, size: 18, color: Colors.white),
+                    icon: const Icon(Icons.camera_alt, size: 18, color: AppColors.white),
                     onPressed: () {},
                   ),
                 ),
               ],
             ),
-            TextButton(onPressed: () {}, child: const Text("Change Photo")),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                "Change Photo",
+                style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+              ),
+            ),
             const SizedBox(height: 20),
             _buildEditField("Full Name", nameCtrl),
             _buildEditField("Email Address", emailCtrl),
             _buildEditField(
               "Phone Number",
-              TextEditingController(text: "+1 234 567 890"),
+              TextEditingController(text: "+20 114190948"),
             ),
             _buildEditField(
               "Date of Birth",
-              TextEditingController(text: "15 / 08 / 1990"),
+              TextEditingController(text: "01 / 01 / 2002"),
               icon: Icons.calendar_today,
             ),
             const SizedBox(height: 10),
@@ -67,7 +79,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 onPressed: () {},
-                child: const Text("Change Password"),
+                child: Text(
+                  "Change Password",
+                  style: TextStyle(color: AppColors.primary),
+                ),
               ),
             ),
             const SizedBox(height: 30),
@@ -75,22 +90,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     style: OutlinedButton.styleFrom(
                       minimumSize: const Size(0, 55),
+                      side: const BorderSide(color: AppColors.grey300),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: const Text("Cancel"),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: AppColors.textPrimary),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => context.pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: AppColors.primary,
                       minimumSize: const Size(0, 55),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -98,7 +117,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     child: const Text(
                       "Save Changes",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppColors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -110,30 +129,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildEditField(
-    String label,
-    TextEditingController ctrl, {
-    IconData? icon,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(color: Colors.grey, fontSize: 13)),
-        const SizedBox(height: 8),
-        TextField(
-          controller: ctrl,
-          decoration: InputDecoration(
-            suffixIcon: icon != null ? Icon(icon, color: Colors.grey) : null,
-            filled: true,
-            fillColor: Colors.white,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFECEFF1)),
+  Widget _buildEditField(String label, TextEditingController controller, {IconData? icon}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
-        ),
-        const SizedBox(height: 15),
-      ],
+          const SizedBox(height: 8),
+          TextField(
+            controller: controller,
+            style: const TextStyle(color: AppColors.textPrimary),
+            decoration: InputDecoration(
+              suffixIcon: icon != null ? Icon(icon, color: AppColors.textHint, size: 20) : null,
+              filled: true,
+              fillColor: AppColors.surface,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: AppColors.grey200),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: AppColors.grey200),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(15),
+                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

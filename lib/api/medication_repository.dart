@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../model/medication_model.dart';
+import 'package:pillsync/model/medication_model.dart';
 
 class MedicationRepository {
   Future<List<Medication>> getMedications() async {

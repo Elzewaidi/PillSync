@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ManualEntryScreen extends StatelessWidget {
-  static const String routeName = 'manual_entry_screen';
+  static const String routeName = '/manual-entry';
 
   @override
   Widget build(BuildContext context) {

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../intro_screens/intro_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pillsync/screens/intro_screens/intro_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const String routeName = '/splash';
   const SplashScreen({super.key});
-
-  static const String routeName = 'splash_screen';
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -17,10 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const IntroScreen()),
-        );
+        context.go(IntroScreen.routeName);
       }
     });
   }
