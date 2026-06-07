@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/utils/app_colors.dart';
 
 import '../Edit_Profile_final/Edit_Profile_final.dart';
 
@@ -12,19 +13,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Profile", style: TextStyle(color: Colors.black)),
+        title: const Text("Profile", style: TextStyle(color: AppColors.black)),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined, color: Colors.black),
+            icon: const Icon(Icons.settings_outlined, color: AppColors.black),
             onPressed: () {},
           ),
         ],
@@ -57,10 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   MaterialPageRoute(builder: (context) => EditProfileScreen()),
                 );
               },
-              icon: const Icon(Icons.edit, color: Colors.white),
+              icon: const Icon(Icons.edit, color: AppColors.white),
               label: const Text(
                 "Edit Profile",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: AppColors.white),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00B4D8),

@@ -4,6 +4,8 @@ import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
 
+import '../../../l10n/app_localizations.dart';
+
 class RegisterScreen extends StatefulWidget {
   static const String routeName = 'register_screen';
 
@@ -27,7 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: SingleChildScrollView(
@@ -38,24 +40,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 60),
                 Image.asset(AppAssets.logo_login, height: 100),
                 const SizedBox(height: 20),
-                const Text(
-                  'Create Account',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.createAccount,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Join PILLSYNC and manage your medications',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Text(
+                  AppLocalizations.of(context)!.joinPillSync,
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 30),
                 CustomTextFormField(
                   controller: nameController,
-                  label: 'Full Name',
-                  hint: 'Enter your full name',
+                  label: AppLocalizations.of(context)!.fullName,
+                  hint: AppLocalizations.of(context)!.enterFullName,
                   icon: Icons.person,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your full name';
+                      return AppLocalizations.of(context)!.enterFullName;
                     }
                     return null;
                   },
@@ -63,15 +66,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 12),
                 CustomTextFormField(
                   controller: emailController,
-                  label: 'Email Address',
-                  hint: 'Enter your email',
+                  label: AppLocalizations.of(context)!.emailAddress,
+                  hint: AppLocalizations.of(context)!.enterEmail,
                   icon: Icons.email,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return AppLocalizations.of(context)!.enterEmail;
                     }
                     if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value)) {
-                      return 'Please enter a valid email';
+                      return AppLocalizations.of(context)!.invalidEmail;
                     }
                     return null;
                   },
@@ -79,16 +82,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 12),
                 CustomTextFormField(
                   controller: passwordController,
-                  label: 'Password',
-                  hint: 'Create a password',
+                  label: AppLocalizations.of(context)!.password,
+                  hint: AppLocalizations.of(context)!.createPassword,
                   icon: Icons.lock,
                   obscure: isObscure,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a password';
+                      return AppLocalizations.of(context)!.enterPassword;
                     }
                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                      return AppLocalizations.of(context)!.enterSixDigitCode;
                     }
                     return null;
                   },
@@ -106,16 +109,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 12),
                 CustomTextFormField(
                   controller: confirmPasswordController,
-                  label: 'Confirm Password',
-                  hint: 'Confirm your password',
+                  label: AppLocalizations.of(context)!.confirmPassword,
+                  hint: AppLocalizations.of(context)!.confirmYourPassword,
                   icon: Icons.lock,
                   obscure: isConfirmObscure,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
+                      return AppLocalizations.of(context)!.confirmYourPassword;
                     }
                     if (value != passwordController.text) {
-                      return 'Passwords do not match';
+                      return AppLocalizations.of(context)!.passwordsDoNotMatch;
                     }
                     return null;
                   },
@@ -144,10 +147,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       activeColor: AppColors.darkBlue,
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'I agree to the Terms & Conditions and Privacy Policy',
-                        style: TextStyle(fontSize: 14, color: AppColors.black),
+                        AppLocalizations.of(context)!.agreeTerms,
+                        style: const TextStyle(
+                            fontSize: 14, color: AppColors.black),
                       ),
                     ),
                   ],
@@ -156,14 +160,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Already have an account? ',
+                    Text(
+                      AppLocalizations.of(context)!.alreadyHaveAccount,
                       style: TextStyle(fontSize: 16, color: AppColors.darkGray),
                     ),
                     InkWell(
                       onTap: () => Navigator.pop(context),
-                      child: const Text(
-                        'Login',
+                      child: Text(
+                        AppLocalizations.of(context)!.login,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -181,8 +185,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (formKey.currentState!.validate()) {
                         if (!agreeToTerms) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Please agree to the terms'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .pleaseAgreeTerms),
                             ),
                           );
                           return;
@@ -201,8 +206,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Create Account',
+                    child: Text(
+                      AppLocalizations.of(context)!.createAccount,
                       style: TextStyle(
                         color: AppColors.white,
                         fontWeight: FontWeight.bold,
@@ -213,12 +218,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 24),
                 Row(
-                  children: const [
+                  children: [
                     Expanded(child: Divider()),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
-                        'Or sign up with',
+                        AppLocalizations.of(context)!.orSignUpWith,
                         style: TextStyle(color: AppColors.whiteGray),
                       ),
                     ),
@@ -242,7 +247,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             children: [
                               Image.asset(AppAssets.logo_google, height: 24),
                               const SizedBox(width: 8),
-                              const Text('Google'),
+                              Text(AppLocalizations.of(context)!.google),
                             ],
                           ),
                         ),
@@ -263,7 +268,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             children: [
                               Image.asset(AppAssets.logo_apple, height: 24),
                               const SizedBox(width: 8),
-                              const Text('Apple'),
+                              Text(AppLocalizations.of(context)!.apple),
                             ],
                           ),
                         ),

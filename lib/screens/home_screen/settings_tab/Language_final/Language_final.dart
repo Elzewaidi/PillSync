@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/app_colors.dart';
+
 class LanguageScreen extends StatefulWidget {
   @override
   State<LanguageScreen> createState() => _LanguageScreenState();
@@ -14,12 +16,12 @@ class _LanguageScreenState extends State<LanguageScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Language", style: TextStyle(color: Colors.black)),
+        title: const Text("Language", style: TextStyle(color: AppColors.black)),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: Padding(
@@ -48,7 +50,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(15),
         ),
         child: Row(

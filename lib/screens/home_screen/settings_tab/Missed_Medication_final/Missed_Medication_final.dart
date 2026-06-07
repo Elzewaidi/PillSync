@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/app_colors.dart';
+
 class MissedAlertsScreen extends StatefulWidget {
   static const String routeName = 'missed_alerts';
 
@@ -21,15 +23,15 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Missed Medication Alerts",
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          style: TextStyle(color: AppColors.black, fontSize: 16),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -88,7 +90,7 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Row(
@@ -143,7 +145,7 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFECEFF1)),
@@ -162,7 +164,7 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
           width: double.infinity,
           padding: const EdgeInsets.all(15),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: const Color(0xFFECEFF1)),
           ),
@@ -217,7 +219,7 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
       child: Text(
         txt,
         style: const TextStyle(
-          color: Colors.white,
+          color: AppColors.white,
           fontWeight: FontWeight.bold,
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pillsync/utils/app_colors.dart';
 
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/app_assets.dart';
 
 class OTPScreen extends StatelessWidget {
@@ -11,9 +12,7 @@ class OTPScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: IconButton(onPressed: () {}, icon: Icon(Icons.arrow_back)),
-      ),
+      appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -21,21 +20,21 @@ class OTPScreen extends StatelessWidget {
           children: [
             Image.asset(AppAssets.logo_forget),
             const SizedBox(height: 8),
-            const Text(
-              'Enter OTP',
+            Text(
+              AppLocalizations.of(context)!.enterOtp,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Center(
-              child: const Text(
-                'We sent a code to email@gmail.com',
+              child: Text(
+                AppLocalizations.of(context)!.weSentCodeTo,
                 style: TextStyle(fontSize: 16, color: AppColors.darkGray),
               ),
             ),
             const SizedBox(height: 30),
             Center(
-              child: const Text(
-                'Enter 6-digit code',
+              child: Text(
+                AppLocalizations.of(context)!.enterSixDigitCode,
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -60,8 +59,8 @@ class OTPScreen extends StatelessWidget {
             const SizedBox(height: 10),
             TextButton(
               onPressed: () {},
-              child: const Text(
-                'Resend Code',
+              child: Text(
+                AppLocalizations.of(context)!.resendCode,
                 style: TextStyle(
                   color: AppColors.whiteBlue,
                   fontWeight: FontWeight.w400,
@@ -82,8 +81,8 @@ class OTPScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Verify OTP',
+                child: Text(
+                  AppLocalizations.of(context)!.verifyOtp,
                   style: TextStyle(
                     color: AppColors.white,
                     fontWeight: FontWeight.bold,

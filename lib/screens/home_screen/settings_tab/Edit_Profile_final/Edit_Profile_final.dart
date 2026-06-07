@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/app_colors.dart';
+
 class EditProfileScreen extends StatefulWidget {
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -12,18 +14,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Edit Profile",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: AppColors.black),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -43,7 +45,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   backgroundColor: Colors.blue,
                   radius: 18,
                   child: IconButton(
-                    icon: const Icon(Icons.edit, size: 18, color: Colors.white),
+                    icon: const Icon(
+                        Icons.edit, size: 18, color: AppColors.white),
                     onPressed: () {},
                   ),
                 ),
@@ -98,7 +101,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     child: const Text(
                       "Save Changes",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppColors.white),
                     ),
                   ),
                 ),
@@ -125,7 +128,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           decoration: InputDecoration(
             suffixIcon: icon != null ? Icon(icon, color: Colors.grey) : null,
             filled: true,
-            fillColor: Colors.white,
+            fillColor: AppColors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: Color(0xFFECEFF1)),

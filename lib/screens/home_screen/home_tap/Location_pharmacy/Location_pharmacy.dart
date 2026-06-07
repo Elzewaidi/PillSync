@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../utils/app_colors.dart';
+
 class NearbyPharmaciesScreen extends StatefulWidget {
   static const String routeName = 'nearby_pharmacies';
 
@@ -95,7 +97,8 @@ class _NearbyPharmaciesScreenState extends State<NearbyPharmaciesScreen> {
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white, size: 22),
+            icon: const Icon(
+                Icons.arrow_back, color: AppColors.white, size: 22),
             onPressed: () => Navigator.pop(context),
           ),
           const Column(
@@ -109,7 +112,7 @@ class _NearbyPharmaciesScreenState extends State<NearbyPharmaciesScreen> {
               Text(
                 "6 October City ",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -120,10 +123,10 @@ class _NearbyPharmaciesScreenState extends State<NearbyPharmaciesScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: AppColors.white.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.near_me, color: Colors.white, size: 18),
+            child: const Icon(Icons.near_me, color: AppColors.white, size: 18),
           ),
         ],
       ),
@@ -152,10 +155,10 @@ class _NearbyPharmaciesScreenState extends State<NearbyPharmaciesScreen> {
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10),
+          BoxShadow(color: AppColors.black.withOpacity(0.02), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -233,7 +236,7 @@ class _NearbyPharmaciesScreenState extends State<NearbyPharmaciesScreen> {
                   ),
                   child: const Text(
                     "Call",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: AppColors.white),
                   ),
                 ),
               ),

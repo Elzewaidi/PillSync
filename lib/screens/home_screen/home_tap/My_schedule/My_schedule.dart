@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/model/medication_model.dart';
+import 'package:pillsync/utils/app_colors.dart';
 // import 'package:horizontal_calendar/horizontal_calendar.dart';
 
 class PatientScheduleScreen extends StatefulWidget {
@@ -14,11 +16,17 @@ class PatientScheduleScreen extends StatefulWidget {
 
 class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
   @override
+  void initState() {
+    super.initState();
+    context.read<MedicationCubit>().loadMedications();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 20),
@@ -30,7 +38,7 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
             const Text(
               "My Schedule",
               style: TextStyle(
-                color: Colors.black,
+                color: AppColors.black,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -46,15 +54,78 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
           ],
         ),
       ),
-      body: BlocBuilder<MedicationCubit, MedicationState>(
-        builder: (context, state) {
+      body: BlocConsumer<MedicationCubit, MedicationState>(
+        listener: (context, state) {
+          if (state is MedicationError &&
+              state.message ==
+                  'No internet connection. Please check your network.') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'No internet connection. Please check your network.',
+                ),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }builder: (context, state) {
           if (state is MedicationLoading) {
             return const Center(child: CircularProgressIndicator());
+          }
+          if (state is MedicationError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                        Icons.error_outline, color: Colors.red, size: 32),
+                    const SizedBox(height: 10),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.black87),
+                    ),
+                    const SizedBox(height: 14),
+                    ElevatedButton(
+                      onPressed: () =>
+                          context.read<MedicationCubit>().loadMedications(
+                              forceRefresh: true),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           List<Medication> medications = [];
           if (state is MedicationLoaded) {
             medications = state.medications;
+          }
+          if (medications.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(
+                      Icons.medication_liquid,
+                      size: 54,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      'Your schedule is empty! Add your first medication to get started.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey, fontSize: 15),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           final groupedMeds = _groupMedsByTime(medications);
@@ -112,18 +183,18 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 "Today",
                 style: TextStyle(color: Colors.white70, fontSize: 14),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
-                "Wednesday, Nov 19",
+                DateFormat('EEEE, MMM d').format(DateTime.now()),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -133,22 +204,22 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: AppColors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Text(
-                  "19",
+                  DateFormat('d').format(DateTime.now()),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  "Nov",
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+                  DateFormat('MMM').format(DateTime.now()),
+                  style: TextStyle(color: AppColors.white, fontSize: 12),
                 ),
               ],
             ),
@@ -186,10 +257,10 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 5),
+            BoxShadow(color: AppColors.black.withOpacity(0.02), blurRadius: 5),
           ],
         ),
         child: Row(
@@ -260,61 +331,84 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
   }
 
   Widget _buildMedCard(Medication med) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+    return Dismissible(
+      key: Key(med.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        alignment: Alignment.centerRight,
+        child: const Icon(
+          Icons.delete,
+          color: AppColors.white,
+          size: 28,
+        ),
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 35,
-            height: 35,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: med.color, width: 4),
+      onDismissed: (_) {
+        context.read<MedicationCubit>().deleteMedicine(med.id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${med.name} deleted')),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withOpacity(0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  med.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 35,
+              height: 35,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: med.color, width: 4),
+              ),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    med.name,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-                const Text(
-                  "10mg",
-                  style: TextStyle(color: Colors.grey, fontSize: 13),
-                ),
-                // Hardcoded for now
-              ],
+                  Text(
+                    med.dosage,
+                    style: const TextStyle(color: Colors.grey, fontSize: 13),
+                  ),
+                ],
+              ),
             ),
-          ),
-          InkWell(
-            onTap: () {
-              context.read<MedicationCubit>().toggleMedication(med);
-            },
-            child: Icon(
-              med.isTaken ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: med.isTaken ? Colors.green : Colors.grey[300],
-              size: 28,
+            InkWell(
+              onTap: () {
+                context.read<MedicationCubit>().toggleMedication(med);
+              },
+              child: Icon(
+                med.isTaken ? Icons.check_circle : Icons.radio_button_unchecked,
+                color: med.isTaken ? Colors.green : Colors.grey[300],
+                size: 28,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -21,6 +21,15 @@ class MedicationLoaded extends MedicationState {
   List<Object> get props => [medications];
 }
 
+class MedicationActionSuccess extends MedicationLoaded {
+  final String message;
+
+  const MedicationActionSuccess(super.medications, this.message);
+
+  @override
+  List<Object> get props => [medications, message];
+}
+
 class MedicationError extends MedicationState {
   final String message;
 

@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/model/medication_model.dart';
+import 'package:pillsync/utils/app_colors.dart';
+
 import '../home_tap/home_screen.dart';
 
 class ReportsScreen extends StatefulWidget {
@@ -21,12 +23,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.surfaceBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () {
             if (Navigator.canPop(context)) {
               Navigator.pop(context);
@@ -37,7 +39,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         ),
         title: const Text(
           "Reports",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(color: AppColors.black, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -77,13 +79,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     _buildInsightCard(
                       "Missed Doses",
                       "$missedDoses",
-                      Colors.redAccent,
+                      AppColors.redAccent,
                     ),
                     const SizedBox(width: 15),
                     _buildInsightCard(
                       "Taken Doses",
                       "$onTimeDoses",
-                      Colors.teal,
+                      AppColors.teal,
                     ),
                   ],
                 ),
@@ -102,11 +104,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.blue.withOpacity(0.1)),
+        border: Border.all(color: AppColors.blue.withOpacity(0.1)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10),
+          BoxShadow(color: AppColors.black.withOpacity(0.02), blurRadius: 10),
         ],
       ),
       child: Column(
@@ -114,7 +116,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         children: [
           const Text(
             "Medication Adherence",
-            style: TextStyle(color: Colors.blueGrey, fontSize: 14),
+            style: TextStyle(color: AppColors.blueGrey, fontSize: 14),
           ),
           const SizedBox(height: 5),
           const Row(
@@ -127,7 +129,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Text(
                 "+5%",
                 style: TextStyle(
-                  color: Colors.teal,
+                  color: AppColors.teal,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -135,7 +137,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
           ),
           const Text(
             "Last 30 Days",
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(color: AppColors.grey, fontSize: 12),
           ),
           const SizedBox(height: 30),
           SizedBox(height: 200, child: LineChart(_mainData())),
@@ -186,13 +188,13 @@ class _ReportsScreenState extends State<ReportsScreen> {
             FlSpot(7, 4.5),
           ],
           isCurved: true,
-          color: const Color(0xFF00B4D8),
+          color: AppColors.skyBlue,
           barWidth: 4,
           isStrokeCapRound: true,
           dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
-            color: const Color(0xFF00B4D8).withOpacity(0.1),
+            color: AppColors.skyBlue.withOpacity(0.1),
           ),
         ),
       ],
@@ -204,11 +206,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: Colors.blue.withOpacity(0.05)),
+          border: Border.all(color: AppColors.blue.withOpacity(0.05)),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 5),
+            BoxShadow(color: AppColors.black.withOpacity(0.02), blurRadius: 5),
           ],
         ),
         child: Column(
@@ -216,7 +218,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
           children: [
             Text(
               title,
-              style: const TextStyle(color: Colors.blueGrey, fontSize: 13),
+              style: const TextStyle(color: AppColors.blueGrey, fontSize: 13),
             ),
             const SizedBox(height: 10),
             Text(
@@ -238,17 +240,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF00B4D8).withOpacity(0.05),
+        color: AppColors.skyBlue.withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         children: [
-          const Icon(Icons.auto_awesome, color: Color(0xFF00B4D8), size: 30),
+          const Icon(Icons.auto_awesome, color: AppColors.skyBlue, size: 30),
           const SizedBox(height: 10),
           Text(
             "You've shown great consistency this month! Keep up the good work. Consider setting reminders for your medication times to further improve adherence.",
             style: TextStyle(
-              color: Colors.blueGrey[700],
+              color: AppColors.blueGrey700,
               height: 1.5,
               fontSize: 15,
             ),

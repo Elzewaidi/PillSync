@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'welcome_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
+
+import 'welcome_screen.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
@@ -40,7 +41,7 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -129,7 +130,7 @@ class _IntroScreenState extends State<IntroScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.white,
                   minimumSize: const Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),

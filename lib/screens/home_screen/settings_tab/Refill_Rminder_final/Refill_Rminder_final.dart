@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../utils/app_colors.dart';
+
 class RefillReminderScreen extends StatefulWidget {
   static const String routeName = 'refill_reminder_screen';
 
@@ -24,22 +26,22 @@ class _RefillReminderScreenState extends State<RefillReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black),
+          icon: const Icon(Icons.close, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Refill Reminder",
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.black,
             fontSize: 17,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -97,7 +99,7 @@ class _RefillReminderScreenState extends State<RefillReminderScreen> {
                   child: const Text(
                     "Save Reminder",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -135,7 +137,7 @@ class _RefillReminderScreenState extends State<RefillReminderScreen> {
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.white,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 15,

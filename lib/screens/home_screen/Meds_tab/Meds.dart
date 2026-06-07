@@ -1,24 +1,62 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/screens/home_screen/Meds_tab/Medications_Detialed/Medications_Detialed.dart';
 import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/utils/app_colors.dart';
+
+import '../../../l10n/app_localizations.dart';
 import '../../../model/medication_model.dart';
 
-class MedsTabContent extends StatelessWidget {
+class MedsTabContent extends StatefulWidget {
   static const String routeName = 'meds_tab_content';
 
   const MedsTabContent({super.key});
 
   @override
+  State<MedsTabContent> createState() => _MedsTabContentState();
+}
+
+class _MedsTabContentState extends State<MedsTabContent> {
+  Timer? _nextDoseTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _nextDoseTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _nextDoseTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MedicationCubit, MedicationState>(
+    return BlocConsumer<MedicationCubit, MedicationState>(
+      listener: (context, state) {
+        if (state is MedicationActionSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.green,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         List<Medication> todaySchedule = [];
         if (state is MedicationLoaded) {
           todaySchedule = state.medications;
         }
+        final cubit = context.watch<MedicationCubit>();
+        final nextMed = cubit.nextUpcomingMedication;
 
         return SafeArea(
           child: Column(
@@ -32,8 +70,8 @@ class MedsTabContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const SizedBox(width: 48),
-                    const Text(
-                      "My Medications",
+                    Text(
+                      AppLocalizations.of(context)!.mymedications,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -62,10 +100,10 @@ class MedsTabContent extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 10),
-                            _buildNextDoseCard(context),
+                            _buildNextDoseCard(context, nextMed),
                             const SizedBox(height: 25),
-                            const Text(
-                              "Today's Schedule",
+                            Text(
+                              AppLocalizations.of(context)!.todaySchedule,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -73,7 +111,7 @@ class MedsTabContent extends StatelessWidget {
                             ),
                             const SizedBox(height: 15),
                             if (todaySchedule.isEmpty)
-                              const Center(
+                              Center(
                                 child: Text("No medications for today"),
                               ),
                             ...todaySchedule
@@ -93,21 +131,45 @@ class MedsTabContent extends StatelessWidget {
     );
   }
 
-  Widget _buildNextDoseCard(BuildContext context) {
+  Widget _buildNextDoseCard(BuildContext context, Medication? nextMed) {
+    if (nextMed == null) {
+      return Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: const Center(
+          child: Text(
+            "All done for today! 🌟",
+            style: TextStyle(
+              color: AppColors.cyanPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final countdownText = context.watch<MedicationCubit>().getCountdownText(
+      nextMed.timeTotake,
+    );
+
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) =>
-                const MedicationDetailsScreen(medId: "next_dose_id"),
+                MedicationDetailsScreen(medId: nextMed.id),
           ),
         );
       },
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFFE0F7FA),
+          color: AppColors.cyanSurface,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Stack(
@@ -115,17 +177,26 @@ class MedsTabContent extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Next dose: Aspirin",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                Text(
+                  AppLocalizations.of(context)!.nextDose,
+                  style: TextStyle(color: AppColors.grey, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  "in 25 minutes",
+                Text(
+                  nextMed.medicineName,
                   style: TextStyle(
-                    color: Color(0xFF00BCD4),
-                    fontSize: 28,
+                    color: AppColors.cyanPrimary,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  countdownText,
+                  style: const TextStyle(
+                    color: AppColors.cyanPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -133,33 +204,40 @@ class MedsTabContent extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Take now API logic
+                        context.read<MedicationCubit>().markMedicationTakenById(
+                          nextMed.id,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF00BCD4),
+                        backgroundColor: AppColors.cyanPrimary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        "Take Now",
-                        style: TextStyle(color: Colors.white),
+                      child: Text(
+                        AppLocalizations.of(context)!.takeNow,
+                        style: TextStyle(color: AppColors.white),
                       ),
                     ),
                     const SizedBox(width: 12),
                     OutlinedButton(
                       onPressed: () {
-                        // Snooze logic
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Reminder snoozed for 10 minutes.'),
+                            backgroundColor: AppColors.blue,
+                          ),
+                        );
                       },
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF00BCD4)),
+                        side: const BorderSide(color: AppColors.cyanPrimary),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        "Snooze",
-                        style: TextStyle(color: Color(0xFF00BCD4)),
+                      child: Text(
+                        AppLocalizations.of(context)!.snooze,
+                        style: TextStyle(color: AppColors.cyanPrimary),
                       ),
                     ),
                   ],
@@ -170,7 +248,7 @@ class MedsTabContent extends StatelessWidget {
               right: 0,
               top: 0,
               child: CircleAvatar(
-                backgroundColor: const Color(0xFF00BCD4),
+                backgroundColor: AppColors.cyanPrimary,
                 child: Image.asset(AppAssets.Meds_2),
               ),
             ),
@@ -195,11 +273,11 @@ class MedsTabContent extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: AppColors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -225,26 +303,27 @@ class MedsTabContent extends StatelessWidget {
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Colors.black,
+                      color: AppColors.black,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     med.time,
-                    style: const TextStyle(color: Colors.grey, fontSize: 13),
+                    style: const TextStyle(color: AppColors.grey, fontSize: 13),
                   ),
                 ],
               ),
             ),
             med.isTaken
-                ? const Row(
+                ? Row(
                     children: [
-                      Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      Icon(
+                          Icons.check_circle, color: AppColors.green, size: 20),
                       SizedBox(width: 4),
                       Text(
-                        "Taken",
+                        AppLocalizations.of(context)!.taken,
                         style: TextStyle(
-                          color: Colors.green,
+                          color: AppColors.green,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -260,12 +339,13 @@ class MedsTabContent extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.cyan.withOpacity(0.1),
+                        color: AppColors.cyanPrimary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text(
-                        "Mark as Taken",
-                        style: TextStyle(color: Colors.cyan, fontSize: 12),
+                      child: Text(
+                        AppLocalizations.of(context)!.markAsTaken,
+                        style: TextStyle(
+                            color: AppColors.cyanPrimary, fontSize: 12),
                       ),
                     ),
                   ),

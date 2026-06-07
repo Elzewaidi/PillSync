@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:pillsync/l10n/app_localizations.dart';
+import 'package:pillsync/screens/home_screen/settings_tab/Language_final/Language_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Medication_Reminders_final/Medication_Reminders_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Missed_Medication_final/Missed_Medication_final.dart';
-import 'package:pillsync/screens/home_screen/settings_tab/Refill_Rminder_final/Refill_Rminder_final.dart';
-import 'package:pillsync/screens/home_screen/settings_tab/Language_final/Language_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Profile_final/Profile_final.dart';
+import 'package:pillsync/screens/home_screen/settings_tab/Refill_Rminder_final/Refill_Rminder_final.dart';
+import 'package:pillsync/utils/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   static const String routeName = 'settings_screen';
@@ -20,16 +22,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text(
-          "Settings",
+        title: Text(
+          AppLocalizations.of(context)!.settings,
           style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
+            color: AppColors.black,
+            fontSize: 25,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -37,10 +39,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle("Reminders"),
+            _buildSectionTitle(AppLocalizations.of(context)!.reminders),
             _buildSettingTile(
               Icons.notifications_none,
-              "Medication Reminders",
+              AppLocalizations.of(context)!.medicationReminders,
               trailing: const Icon(Icons.arrow_forward_ios, size: 14),
               onTap: () {
                 Navigator.push(
@@ -53,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildSettingTile(
               Icons.opacity,
-              "Refill Reminder",
+              AppLocalizations.of(context)!.refillReminder,
               trailing: const Icon(Icons.arrow_forward_ios, size: 14),
               onTap: () {
                 Navigator.push(
@@ -66,7 +68,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildSettingTile(
               Icons.warning_amber_rounded,
-              "Missed Medication Alerts",
+              AppLocalizations.of(context)!.missedMedicationAlerts,
               trailing: const Icon(Icons.arrow_forward_ios, size: 14),
               onTap: () {
                 Navigator.push(
@@ -77,17 +79,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildSettingTile(
               Icons.access_time,
-              "Snooze Options",
+              AppLocalizations.of(context)!.snoozeOptions,
               trailing: const Text(
                 "10 minutes",
                 style: TextStyle(color: Colors.grey),
               ),
             ),
             const SizedBox(height: 25),
-            _buildSectionTitle("General"),
+            _buildSectionTitle(AppLocalizations.of(context)!.general),
             _buildSettingTile(
               Icons.language,
-              "Language",
+              AppLocalizations.of(context)!.language,
               trailing: const Text(
                 "English >",
                 style: TextStyle(color: Colors.grey),
@@ -101,7 +103,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildSettingTile(
               Icons.dark_mode_outlined,
-              "Dark Theme",
+              AppLocalizations.of(context)!.darkTheme,
               trailing: Switch(
                 value: isDarkTheme,
                 onChanged: (value) {
@@ -113,10 +115,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 25),
-            _buildSectionTitle("Account"),
+            _buildSectionTitle(AppLocalizations.of(context)!.account),
             _buildSettingTile(
               Icons.person_outline,
-              "Profile",
+              AppLocalizations.of(context)!.profile,
               trailing: const Icon(Icons.arrow_forward_ios, size: 14),
               onTap: () {
                 Navigator.push(
@@ -127,7 +129,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             _buildSettingTile(
               Icons.logout,
-              "Logout",
+              AppLocalizations.of(context)!.logout,
               textColor: Colors.red,
               iconColor: Colors.red,
               onTap: () {
@@ -187,7 +189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(15),
       ),
       child: ListTile(

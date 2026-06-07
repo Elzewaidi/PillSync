@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../utils/app_assets.dart';
+import '../../../../utils/app_colors.dart';
 
 class MedicationDetailsScreen extends StatefulWidget {
   static const String routeName = 'med_details';
@@ -33,22 +34,22 @@ class _MedicationDetailsScreenState extends State<MedicationDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Medication Details",
           style: TextStyle(
-            color: Colors.black,
+            color: AppColors.black,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -154,7 +155,7 @@ class _MedicationDetailsScreenState extends State<MedicationDetailsScreen> {
                 child: const Text(
                   "Show Alternatives",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -165,35 +166,7 @@ class _MedicationDetailsScreenState extends State<MedicationDetailsScreen> {
           ],
         ),
       ),
-      // شريط التنقل السفلي (Bottom Navigation Bar)
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFF00B4D8),
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, color: Colors.white, size: 30),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home_outlined, "Home"),
-              _buildNavItem(
-                Icons.medical_services_outlined,
-                "Meds",
-                isSelected: true,
-              ),
-              const SizedBox(width: 40), // مكان الزر العائم
-              _buildNavItem(Icons.bar_chart_outlined, "Reports"),
-              _buildNavItem(Icons.settings_outlined, "Settings"),
-            ],
-          ),
-        ),
-      ),
     );
   }
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pillsync/custom_widgets/custom_text_form_field.dart';
 import 'package:pillsync/utils/app_assets.dart';
+
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/app_colors.dart';
+import 'OTP_forget_pass_screen.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
   static const String routeName = 'forgot_password_screen';
@@ -9,13 +12,13 @@ class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -30,20 +33,20 @@ class ForgotPasswordScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 Image.asset(AppAssets.logo_forget, height: 200),
                 const SizedBox(height: 20),
-                const Text(
-                  'Forgot Password?',
+                Text(
+                  AppLocalizations.of(context)!.forgotPassword,
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Enter your email to receive a verification code',
+                Text(
+                  AppLocalizations.of(context)!.forgotPasswordSubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 16, color: Colors.grey, height: 1.5),
                 ),
                 const SizedBox(height: 40),
-                const CustomTextFormField(
-                  label: "Email Address",
+                CustomTextFormField(
+                  label: AppLocalizations.of(context)!.emailAddress,
                   hint: 'example@gmail.com',
                   icon: Icons.email_outlined,
                 ),
@@ -51,7 +54,14 @@ class ForgotPasswordScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // الانتقال لشاشة الـ OTP باستخدام الـ Route Name
+                      Navigator.pushNamed(
+                        context,
+                        OTPScreen
+                            .routeName, // تأكد إنك معرف routeName جوه كلاس OTPScreen
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.darkBlue,
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -60,16 +70,15 @@ class ForgotPasswordScreen extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Send OTP',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.sendOtp,
+                      style: const TextStyle(
                         color: AppColors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
                       ),
                     ),
-                  ),
-                ),
+                  ),),
               ],
             ),
           ),

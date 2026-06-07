@@ -3,6 +3,8 @@ import 'package:pillsync/custom_widgets/custom_text_form_field.dart';
 import 'package:pillsync/screens/auth/password/forget_password.dart';
 import 'package:pillsync/screens/auth/register/register_screen.dart';
 import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
+
+import '../../../l10n/app_localizations.dart';
 import '../../../utils/app_assets.dart';
 import '../../../utils/app_colors.dart';
 
@@ -23,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: SingleChildScrollView(
@@ -35,24 +37,24 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 60),
                 Image.asset(AppAssets.logo_login, height: 100),
                 const SizedBox(height: 8),
-                const Text(
-                  'Welcome Back',
+                Text(
+                  AppLocalizations.of(context)!.welcomeBack,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Sign in to continue to PILLSYNC',
+                Text(
+                  AppLocalizations.of(context)!.signInToContinue,
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 30),
                 CustomTextFormField(
                   controller: emailController,
-                  label: 'Email Address',
-                  hint: 'Enter your email',
+                  label: AppLocalizations.of(context)!.emailAddress,
+                  hint: AppLocalizations.of(context)!.enterEmail,
                   icon: Icons.email,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                      return AppLocalizations.of(context)!.enterEmail;
                     }
                     return null;
                   },
@@ -60,13 +62,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 CustomTextFormField(
                   controller: passwordController,
-                  label: 'Password',
-                  hint: 'Enter your password',
+                  label: AppLocalizations.of(context)!.password,
+                  hint: AppLocalizations.of(context)!.enterPassword,
                   icon: Icons.lock,
                   obscure: isObscure,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return AppLocalizations.of(context)!.enterPassword;
                     }
                     return null;
                   },
@@ -94,8 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         });
                       },
                     ),
-                    const Text(
-                      "Remember me",
+                    Text(
+                      AppLocalizations.of(context)!.rememberMe,
                       style: TextStyle(
                           color: AppColors.whiteGray, fontSize: 14),
                     ),
@@ -105,8 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushNamed(
                             context, ForgotPasswordScreen.routeName);
                       },
-                      child: const Text(
-                        "Forget Password?",
+                      child: Text(
+                        AppLocalizations.of(context)!.forgotPassword,
                         style: TextStyle(
                           color: AppColors.darkBlue,
                           fontWeight: FontWeight.bold,
@@ -132,8 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      'Login',
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
                       style: TextStyle(
                         color: AppColors.white,
                         fontWeight: FontWeight.bold,
@@ -146,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Don\'t have an account?'),
+                    Text(AppLocalizations.of(context)!.dontHaveAccount),
                     TextButton(
                       onPressed: () {
                         Navigator.push(
@@ -155,8 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               RegisterScreen()),
                         );
                       },
-                      child: const Text(
-                        "Sign Up",
+                      child: Text(
+                        AppLocalizations.of(context)!.signUp,
                         style: TextStyle(
                           color: AppColors.whiteBlue,
                           fontWeight: FontWeight.bold,
@@ -166,8 +168,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Or continue with ',
+                Text(
+                  AppLocalizations.of(context)!.orContinueWith,
                   style: TextStyle(fontWeight: FontWeight.w300),
                 ),
                 const SizedBox(height: 16),
@@ -190,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Image.asset(AppAssets.logo_google, height: 24),
                               const SizedBox(width: 8),
-                              const Text('Google'),
+                              Text(AppLocalizations.of(context)!.google),
                             ],
                           ),
                         ),
@@ -214,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             children: [
                               Image.asset(AppAssets.logo_apple, height: 24),
                               const SizedBox(width: 8),
-                              const Text('Apple'),
+                              Text(AppLocalizations.of(context)!.apple),
                             ],
                           ),
                         ),

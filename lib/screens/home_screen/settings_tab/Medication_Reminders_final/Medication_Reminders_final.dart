@@ -4,6 +4,7 @@ import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/model/medication_model.dart';
 import 'package:pillsync/utils/app_assets.dart';
+
 import '../../../../utils/app_colors.dart';
 
 class MedicationRemindersScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: AppColors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -33,7 +34,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: BlocBuilder<MedicationCubit, MedicationState>(
@@ -88,7 +89,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                   label: const Text(
                     "Add Reminder",
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -115,11 +116,11 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: AppColors.black.withOpacity(0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

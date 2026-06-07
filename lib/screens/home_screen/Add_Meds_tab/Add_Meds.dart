@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pillsync/screens/home_screen/Add_Meds_tab/scan_screen/scan_screen.dart';
+import 'package:pillsync/utils/app_colors.dart';
 
+import '../../../l10n/app_localizations.dart';
 import 'manual_screen/manual_screen.dart';
 
 class AddMedicationScreen extends StatelessWidget {
@@ -9,18 +11,18 @@ class AddMedicationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Add Medication",
+          AppLocalizations.of(context)!.addMedication,
           style: TextStyle(color: Colors.black87, fontSize: 18),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.white,
         elevation: 0,
       ),
       body: Padding(
@@ -29,7 +31,7 @@ class AddMedicationScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "How would you like to add your medication?",
+              AppLocalizations.of(context)!.addMedicationMethod,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -41,8 +43,8 @@ class AddMedicationScreen extends StatelessWidget {
             // خيار الـ Scan
             _buildOptionCard(
               context,
-              title: "Scan Prescription",
-              subtitle: "Use your camera to scan your prescription",
+              title: AppLocalizations.of(context)!.scanPrescription,
+              subtitle: AppLocalizations.of(context)!.useCameraScan,
               icon: Icons.camera_alt_outlined,
               onTap: () => Navigator.push(
                 context,
@@ -57,8 +59,8 @@ class AddMedicationScreen extends StatelessWidget {
             // خيار الـ Manual
             _buildOptionCard(
               context,
-              title: "Enter Details Manually",
-              subtitle: "Manually enter medication details",
+              title: AppLocalizations.of(context)!.enterDetailsManually,
+              subtitle: AppLocalizations.of(context)!.manuallyEnterDetails,
               icon: Icons.edit_note_outlined,
               onTap: () => Navigator.push(
                 context,
@@ -85,10 +87,10 @@ class AddMedicationScreen extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey.shade100),
-          color: Colors.white,
+          color: AppColors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.02),
+              color: AppColors.black.withOpacity(0.02),
               blurRadius: 10,
               offset: Offset(0, 5),
             ),

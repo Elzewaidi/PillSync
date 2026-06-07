@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:pillsync/utils/app_assets.dart';
-import 'package:pillsync/utils/app_colors.dart';
 import 'package:pillsync/screens/auth/login/login_screen.dart';
 import 'package:pillsync/screens/auth/register/register_screen.dart';
+import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/utils/app_colors.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -12,7 +12,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
           Expanded(
@@ -56,7 +56,7 @@ class WelcomeScreen extends StatelessWidget {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF1FB8EB),
-                      foregroundColor: Colors.black,
+                      foregroundColor: AppColors.black,
                       minimumSize: const Size(double.infinity, 55),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -78,7 +78,7 @@ class WelcomeScreen extends StatelessWidget {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFE8F1F5),
-                      foregroundColor: Colors.black,
+                      foregroundColor: AppColors.black,
                       minimumSize: const Size(double.infinity, 55),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

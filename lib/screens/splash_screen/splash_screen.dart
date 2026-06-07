@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../intro_screens/intro_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/utils/app_colors.dart';
+
+import '../intro_screens/intro_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -46,14 +48,15 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 180,
               height: 180,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(Icons.error, color: Colors.white, size: 100);
+                return const Icon(
+                    Icons.error, color: AppColors.white, size: 100);
               },
             ),
             const SizedBox(height: 20),
             const Text(
               'PillSYNC',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 42,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
@@ -62,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const Text(
               'Smart Medication Management',
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
               ),
@@ -77,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   width: 8,
                   height: 8,
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     shape: BoxShape.circle,
                   ),
                 ),
