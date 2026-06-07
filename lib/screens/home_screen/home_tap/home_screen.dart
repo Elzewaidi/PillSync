@@ -5,6 +5,8 @@ import 'package:pillsync/features/auth/domain/entities/user.dart';
 import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
 
 import 'package:pillsync/features/auth/presentation/bloc/auth_state.dart';
+import 'package:pillsync/screens/home_screen/Add_Meds_tab/Add_Meds.dart';
+import 'package:pillsync/screens/home_screen/Meds_tab/Meds.dart';
 
 import 'package:pillsync/screens/home_screen/Report_tab/Report.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/settings_screen.dart';
@@ -31,11 +33,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       _buildHomeBody(),
-      Container(),
-      Container(),
+      const MedsTabContent(),
+      Container(), 
       ReportsScreen(),
       SettingsScreen(),
     ];
+
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -43,25 +46,35 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: Scaffold(
         backgroundColor: const Color(0xFFF8FAFC),
-
-        bottomNavigationBar: BottomAppBar(
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 8.0,
-          color: Colors.white,
-          child: SizedBox(
-            height: 65,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(AppAssets.home_tab, "Home", 0),
-                _buildNavItem(null, "", 1),
-                _buildNavItem(null, "", 2),
-                _buildNavItem(AppAssets.report_tab, "Reports", 3),
-                _buildNavItem(AppAssets.settings_tab, "Settings", 4),
-              ],
-            ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddMedicationScreen()),
+          );
+        },
+        backgroundColor: const Color(0xFF00B4D8),
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, size: 35, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        color: Colors.white,
+        child: SizedBox(
+          height: 65,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(AppAssets.home_tab, "Home", 0),
+              _buildNavItem(AppAssets.Meds_tab, "Meds", 1),
+              _buildNavItem(AppAssets.report_tab, "Reports", 3),
+              _buildNavItem(AppAssets.settings_tab, "Settings", 4),
+            ],
           ),
         ),
+      ),
 
         body: IndexedStack(index: _selectedIndex, children: pages),
       ),
@@ -142,54 +155,49 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            CircleAvatar(
-              radius: 25,
-              backgroundImage: widget.user.imageUrl != null
-                  ? NetworkImage(widget.user.imageUrl!)
-                  : const AssetImage(AppAssets.profile_1) as ImageProvider,
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Good morning,",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
-                ),
-                Text(
-                  widget.user.fullName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+  return BlocBuilder<AuthBloc, AuthState>(
+    builder: (context, authState) {
+      final user = authState is Authenticated ? authState.user : widget.user;
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundColor: Colors.grey[200],
+                backgroundImage: (user.imageUrl != null && user.imageUrl!.isNotEmpty)
+                    ? NetworkImage(user.imageUrl!)
+                    : null,
+                child: (user.imageUrl == null || user.imageUrl!.isEmpty)
+                    ? const Icon(Icons.person, color: Colors.grey)
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Good morning,",
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        /* Row(
-          children: [
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none_outlined, size: 28),
-            ),
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                context.read<AuthBloc>().add(const LogoutRequested());
-              },
-            ),
-          ],
-        ), */
-      ],
-    );
-  }
-
+                  Text(
+                    user.fullName,  
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        
+        ],
+      );
+    },
+  );
+}
  /*  Widget _buildUserInfoCard() {
     return Container(
       width: double.infinity,
@@ -262,6 +270,17 @@ class _HomeScreenState extends State<HomeScreen> {
       mainAxisSpacing: 16,
       childAspectRatio: 1.1,
       children: [
+         _actionCard(
+          "Add\nMedication",
+          AppAssets.add_icon,
+          const Color(0xFF3B82F6),
+          () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddMedicationScreen()),
+            );
+          },
+        ),
         _actionCard(
           "My\nSchedule",
           AppAssets.scedule_icon,

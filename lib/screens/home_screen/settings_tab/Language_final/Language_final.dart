@@ -6,7 +6,7 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String selectedLang = "Arabic";
+  String selectedLang = "English";
 
   @override
   Widget build(BuildContext context) {
