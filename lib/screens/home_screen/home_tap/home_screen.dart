@@ -15,10 +15,16 @@ import 'package:pillsync/screens/home_screen/settings_tab/settings_screen.dart';
 import 'package:pillsync/screens/home_screen/home_tap/My_schedule/My_schedule.dart';
 import 'package:pillsync/screens/home_screen/home_tap/Location_pharmacy/Location_pharmacy.dart';
 
+import 'package:pillsync/features/auth/domain/entities/user.dart';
+import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:pillsync/features/auth/presentation/bloc/auth_state.dart';
+
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
 
-  const HomeScreen({super.key});
+  final User user;
+
+  const HomeScreen({super.key, required this.user});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -30,13 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Missed medication sheet logic can be triggered here based on state if needed
-    // For now, we removed the hardcoded delay
   }
 
   @override
   Widget build(BuildContext context) {
-    // We define pages dynamically to ensure they have access to latest state/context if needed
     final List<Widget> pages = [
       _buildHomeBody(),
       const MedsTabContent(),
@@ -176,36 +179,47 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final user = authState is Authenticated ? authState.user : widget.user;
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CircleAvatar(
-              radius: 25,
-              backgroundImage: AssetImage(AppAssets.zewaidi),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                const Text(
-                  "Good morning,",
-                  style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                CircleAvatar(
+                  radius: 25,
+                  backgroundColor: AppColors.grey100,
+                  backgroundImage: (user.imageUrl != null && user.imageUrl!.isNotEmpty)
+                      ? NetworkImage(user.imageUrl!)
+                      : AssetImage(AppAssets.zewaidi) as ImageProvider,
+                  child: (user.imageUrl == null || user.imageUrl!.isEmpty)
+                      ? null
+                      : null,
                 ),
-                Text(
-                  "Zewaidi!",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      "Good morning,",
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                    ),
+                    Text(
+                      user.fullName,
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
+                    ),
+                  ],
                 ),
               ],
             ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.notifications_none_outlined, size: 28),
+            ),
           ],
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.notifications_none_outlined, size: 28),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -239,7 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const Text(
             "Next Medicine",
-            // ignore: deprecated_member_use
             style: TextStyle(color: AppColors.white, fontSize: 14),
           ),
           const SizedBox(height: 12),
@@ -258,7 +271,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 "10mg",
                 style: TextStyle(color: AppColors.white, fontSize: 16),
               ),
-              // Hardcoded dosage for now
             ],
           ),
           const SizedBox(height: 15),
@@ -302,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Health Tip of the Day",
                   style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
                 ),
@@ -446,7 +458,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showMissedMedicationSheet(BuildContext context) {
-    // This sheet logic should ideally also be driven by state, but for now we keep it simple
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -521,7 +532,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             const SizedBox(height: 25),
-            _buildMissedItem("Panadol", "9:00 AM"), // Still hardcoded
+            _buildMissedItem("Panadol", "9:00 AM"),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
@@ -529,7 +540,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () => context.pop(),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: const BorderSide(color: AppColors.grey300),
+                  side: const BorderSide(color: AppColors.grey300),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),

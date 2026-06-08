@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pillsync/screens/auth/login/login_screen.dart';
 import 'package:pillsync/screens/auth/password/OTP_forget_pass_screen.dart';
@@ -22,6 +24,10 @@ import 'package:pillsync/screens/home_screen/settings_tab/Language_final/Languag
 import 'package:pillsync/screens/home_screen/settings_tab/Profile_final/Profile_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Edit_Profile_final/Edit_Profile_final.dart';
 import 'package:pillsync/screens/home_screen/Meds_tab/Medications_Detialed/Medications_Detialed.dart';
+
+import 'package:pillsync/features/auth/domain/entities/user.dart';
+import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:pillsync/features/auth/presentation/bloc/auth_state.dart';
 
 class AppRoutes {
   static final router = GoRouter(
@@ -57,7 +63,17 @@ class AppRoutes {
       ),
       GoRoute(
         path: HomeScreen.routeName,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) {
+          final user = state.extra as User?;
+          if (user != null) {
+            return HomeScreen(user: user);
+          }
+          final authState = context.read<AuthBloc>().state;
+          if (authState is Authenticated) {
+            return HomeScreen(user: authState.user);
+          }
+          return const LoginScreen();
+        },
       ),
       GoRoute(
         path: PatientScheduleScreen.routeName,
@@ -110,6 +126,13 @@ class AppRoutes {
       GoRoute(
         path: EditProfileScreen.routeName,
         builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: ResetPasswordScreen.routeName,
+        builder: (context, state) {
+          final email = state.extra as String;
+          return ResetPasswordScreen(email: email);
+        },
       ),
       GoRoute(
         path: LanguageScreen.routeName,
