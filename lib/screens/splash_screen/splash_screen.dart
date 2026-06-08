@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pillsync/screens/intro_screens/intro_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
-import 'package:pillsync/utils/app_colors.dart';
-
-import '../intro_screens/intro_screen.dart';
 
 class SplashScreen extends StatefulWidget {
+  static const String routeName = '/splash';
   const SplashScreen({super.key});
-
-  static const String routeName = 'splash_screen';
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -19,10 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const IntroScreen()),
-        );
+        context.go(IntroScreen.routeName);
       }
     });
   }
@@ -48,15 +43,14 @@ class _SplashScreenState extends State<SplashScreen> {
               width: 180,
               height: 180,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                    Icons.error, color: AppColors.white, size: 100);
+                return const Icon(Icons.error, color: Colors.white, size: 100);
               },
             ),
             const SizedBox(height: 20),
             const Text(
               'PillSYNC',
               style: TextStyle(
-                color: AppColors.white,
+                color: Colors.white,
                 fontSize: 42,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
@@ -65,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const Text(
               'Smart Medication Management',
               style: TextStyle(
-                color: AppColors.white,
+                color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
               ),
@@ -80,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   width: 8,
                   height: 8,
                   decoration: const BoxDecoration(
-                    color: AppColors.white,
+                    color: Colors.white,
                     shape: BoxShape.circle,
                   ),
                 ),

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-
-import '../../../../utils/app_colors.dart';
+import 'package:go_router/go_router.dart';
+import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
 
 class LanguageScreen extends StatefulWidget {
+  static const String routeName = '/language';
+
+  const LanguageScreen({super.key});
+
   @override
   State<LanguageScreen> createState() => _LanguageScreenState();
 }
@@ -13,15 +18,15 @@ class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () => context.pop(),
         ),
-        title: const Text("Language", style: TextStyle(color: AppColors.black)),
+        title: Text("Language", style: AppStyles.font18SemiBoldBlack),
         centerTitle: true,
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
       ),
       body: Padding(
@@ -29,9 +34,9 @@ class _LanguageScreenState extends State<LanguageScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               "Select your preferred language",
-              style: TextStyle(color: Color(0xFF5D6778)),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 20),
             _buildLangTile("English", "English"),
@@ -50,8 +55,15 @@ class _LanguageScreenState extends State<LanguageScreen> {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.grey200,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(color: AppColors.cardShadow, blurRadius: 10),
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,12 +73,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
-                Text(sub, style: const TextStyle(color: Colors.grey)),
+                Text(sub, style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               ],
             ),
-            if (isSelected) const Icon(Icons.check, color: Color(0xFF00B4D8)),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: AppColors.primary),
           ],
         ),
       ),

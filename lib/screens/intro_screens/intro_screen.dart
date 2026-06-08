@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'welcome_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
 
-import 'welcome_screen.dart';
+import 'package:go_router/go_router.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
 
-  static const String routeName = 'intro_screen';
+  static const String routeName = '/intro';
 
   @override
   State<IntroScreen> createState() => _IntroScreenState();
@@ -41,19 +42,14 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
             Align(
               alignment: Alignment.topRight,
               child: TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-                  );
-                },
+                onPressed: () => context.go(WelcomeScreen.routeName),
                 child: const Text(
                   "Skip",
                   style: TextStyle(color: AppColors.darkGray, fontSize: 16),
@@ -130,7 +126,7 @@ class _IntroScreenState extends State<IntroScreen> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  foregroundColor: AppColors.white,
+                  foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -139,10 +135,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 ),
                 onPressed: () {
                   if (index == pages.length - 1) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-                    );
+                    context.go(WelcomeScreen.routeName);
                   } else {
                     controller.nextPage(
                       duration: const Duration(milliseconds: 400),

@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:pillsync/l10n/app_localizations.dart';
-import 'package:pillsync/screens/home_screen/settings_tab/Language_final/Language_final.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Medication_Reminders_final/Medication_Reminders_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Missed_Medication_final/Missed_Medication_final.dart';
-import 'package:pillsync/screens/home_screen/settings_tab/Profile_final/Profile_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Refill_Rminder_final/Refill_Rminder_final.dart';
+import 'package:pillsync/screens/home_screen/settings_tab/Language_final/Language_final.dart';
+import 'package:pillsync/screens/home_screen/settings_tab/Profile_final/Profile_final.dart';
 import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/utils/app_styles.dart';
+
+import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:pillsync/features/auth/presentation/bloc/auth_event.dart';
+import 'package:pillsync/features/auth/presentation/bloc/auth_state.dart';
 
 class SettingsScreen extends StatefulWidget {
-  static const String routeName = 'settings_screen';
+  static const String routeName = '/settings';
+
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -19,124 +27,86 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: Text(
-          AppLocalizations.of(context)!.settings,
-          style: TextStyle(
-            color: AppColors.black,
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is Unauthenticated) {
+          context.go('/login');
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(
+            "Settings",
+            style: AppStyles.font18SemiBoldBlack,
           ),
+          centerTitle: true,
+          backgroundColor: AppColors.surface,
+          elevation: 0,
         ),
-        centerTitle: true,
-        backgroundColor: AppColors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildSectionTitle(AppLocalizations.of(context)!.reminders),
-            _buildSettingTile(
-              Icons.notifications_none,
-              AppLocalizations.of(context)!.medicationReminders,
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MedicationRemindersScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildSettingTile(
-              Icons.opacity,
-              AppLocalizations.of(context)!.refillReminder,
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RefillReminderScreen(),
-                  ),
-                );
-              },
-            ),
-            _buildSettingTile(
-              Icons.warning_amber_rounded,
-              AppLocalizations.of(context)!.missedMedicationAlerts,
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MissedAlertsScreen()),
-                );
-              },
-            ),
-            _buildSettingTile(
-              Icons.access_time,
-              AppLocalizations.of(context)!.snoozeOptions,
-              trailing: const Text(
-                "10 minutes",
-                style: TextStyle(color: Colors.grey),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildSectionTitle("Reminders"),
+              _buildSettingTile(
+                Icons.notifications_none,
+                "Medication Reminders",
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () => context.push(MedicationRemindersScreen.routeName),
               ),
-            ),
-            const SizedBox(height: 25),
-            _buildSectionTitle(AppLocalizations.of(context)!.general),
-            _buildSettingTile(
-              Icons.language,
-              AppLocalizations.of(context)!.language,
-              trailing: const Text(
-                "English >",
-                style: TextStyle(color: Colors.grey),
+              _buildSettingTile(
+                Icons.warning_amber_rounded,
+                "Missed Dose Alerts",
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () => context.push(MissedAlertsScreen.routeName),
               ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LanguageScreen()),
-                );
-              },
-            ),
-            _buildSettingTile(
-              Icons.dark_mode_outlined,
-              AppLocalizations.of(context)!.darkTheme,
-              trailing: Switch(
-                value: isDarkTheme,
-                onChanged: (value) {
-                  setState(() {
-                    isDarkTheme = value;
-                  });
+              _buildSettingTile(
+                Icons.replay_rounded,
+                "Refill Reminders",
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () => context.push(RefillReminderScreen.routeName),
+              ),
+              const SizedBox(height: 30),
+              _buildSectionTitle("Account"),
+              _buildSettingTile(
+                Icons.person_outline,
+                "Profile",
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () => context.push(ProfileScreen.routeName),
+              ),
+              _buildSettingTile(
+                Icons.language_rounded,
+                "Language",
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14),
+                onTap: () => context.push(LanguageScreen.routeName),
+              ),
+              const SizedBox(height: 30),
+              _buildSectionTitle("App Settings"),
+              _buildSettingTile(
+                Icons.dark_mode_outlined,
+                "Dark Theme",
+                trailing: Switch(
+                  value: isDarkTheme,
+                  onChanged: (val) {
+                    setState(() {
+                      isDarkTheme = val;
+                    });
+                  },
+                  activeColor: AppColors.primary,
+                ),
+              ),
+              _buildSettingTile(
+                Icons.logout_rounded,
+                "Logout",
+                textColor: AppColors.error,
+                onTap: () {
+                  _showLogoutDialog();
                 },
-                activeColor: const Color(0xFF00B4D8),
               ),
-            ),
-            const SizedBox(height: 25),
-            _buildSectionTitle(AppLocalizations.of(context)!.account),
-            _buildSettingTile(
-              Icons.person_outline,
-              AppLocalizations.of(context)!.profile,
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfileScreen()),
-                );
-              },
-            ),
-            _buildSettingTile(
-              Icons.logout,
-              AppLocalizations.of(context)!.logout,
-              textColor: Colors.red,
-              iconColor: Colors.red,
-              onTap: () {
-                _showLogoutDialog();
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -156,7 +126,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: const Text("Stay"),
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+              context.read<AuthBloc>().add(const LogoutRequested());
+            },
             child: const Text("Logout", style: TextStyle(color: Colors.red)),
           ),
         ],
@@ -166,13 +139,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12, left: 5),
+      padding: const EdgeInsets.only(bottom: 12, left: 4),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
+          color: AppColors.textSecondary,
           fontSize: 14,
-          color: Colors.grey,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -182,28 +156,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
     IconData icon,
     String title, {
     Widget? trailing,
-    Color? textColor,
-    Color? iconColor,
     VoidCallback? onTap,
+    Color? textColor,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(15),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.cardShadow,
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: iconColor ?? const Color(0xFF00B4D8)),
+        leading: Icon(icon, color: textColor ?? AppColors.textPrimary),
         title: Text(
           title,
           style: TextStyle(
-            fontSize: 15,
+            color: textColor ?? AppColors.textPrimary,
             fontWeight: FontWeight.w500,
-            color: textColor,
           ),
         ),
         trailing: trailing,
+        onTap: onTap,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }

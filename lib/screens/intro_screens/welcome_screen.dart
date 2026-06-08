@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:pillsync/screens/auth/login/login_screen.dart';
-import 'package:pillsync/screens/auth/register/register_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
+import 'package:pillsync/screens/auth/login/login_screen.dart';
+import 'package:pillsync/screens/auth/register/register_screen.dart';
+
+import 'package:go_router/go_router.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  static const String routeName = 'welcome_screen';
+  static const String routeName = '/welcome';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Expanded(
@@ -39,7 +41,7 @@ class WelcomeScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1A1A1A),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -47,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                     "Your smart medication management app.\nEnsure accurate Adherence and reduce errors for Manually entered.",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Color(0xFF4D4D4D),
+                      color: AppColors.textSecondary,
                       fontSize: 15,
                       height: 1.5,
                     ),
@@ -55,17 +57,15 @@ class WelcomeScreen extends StatelessWidget {
                   const Spacer(),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1FB8EB),
-                      foregroundColor: AppColors.black,
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
                       minimumSize: const Size(double.infinity, 55),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, RegisterScreen.routeName);
-                    },
+                    onPressed: () => context.push(RegisterScreen.routeName),
                     child: const Text(
                       "Get Started",
                       style: TextStyle(
@@ -77,17 +77,15 @@ class WelcomeScreen extends StatelessWidget {
                   const SizedBox(height: 15),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFE8F1F5),
-                      foregroundColor: AppColors.black,
+                      backgroundColor: AppColors.grey100,
+                      foregroundColor: AppColors.textPrimary,
                       minimumSize: const Size(double.infinity, 55),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 0,
                     ),
-                    onPressed: () {
-                      Navigator.pushNamed(context, LoginScreen.routeName);
-                    },
+                    onPressed: () => context.push(LoginScreen.routeName),
                     child: const Text(
                       "Log In",
                       style: TextStyle(

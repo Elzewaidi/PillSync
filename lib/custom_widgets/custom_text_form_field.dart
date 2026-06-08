@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/app_colors.dart';
-
 class CustomTextFormField extends StatelessWidget {
   final String label;
   final String hint;
@@ -44,7 +42,7 @@ class CustomTextFormField extends StatelessWidget {
             prefixIcon: Icon(icon),
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: AppColors.white,
+            fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
