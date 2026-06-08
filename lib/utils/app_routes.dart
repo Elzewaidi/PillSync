@@ -24,6 +24,7 @@ import 'package:pillsync/screens/home_screen/settings_tab/Language_final/Languag
 import 'package:pillsync/screens/home_screen/settings_tab/Profile_final/Profile_final.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Edit_Profile_final/Edit_Profile_final.dart';
 import 'package:pillsync/screens/home_screen/Meds_tab/Medications_Detialed/Medications_Detialed.dart';
+import 'package:pillsync/screens/auth/password/reset_password_screen.dart';
 
 import 'package:pillsync/features/auth/domain/entities/user.dart';
 import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
@@ -59,7 +60,13 @@ class AppRoutes {
       ),
       GoRoute(
         path: OTPScreen.routeName,
-        builder: (context, state) => const OTPScreen(),
+        builder: (context, state) {
+          final args = state.extra as Map<String, dynamic>;
+          return OTPScreen(
+            email: args['email'] as String,
+            isFromRegistration: args['isFromRegistration'] as bool,
+          );
+        },
       ),
       GoRoute(
         path: HomeScreen.routeName,
