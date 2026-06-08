@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../manual_screen/manual_screen.dart';
 import '../../../../utils/app_colors.dart';
+import '../manual_screen/manual_screen.dart';
 
 class ScanPrescriptionScreen extends StatefulWidget {
   static const String routeName = 'scan_prescription_screen';
@@ -285,7 +285,7 @@ class _ScanPrescriptionScreenState extends State<ScanPrescriptionScreen> {
                             size: 35,
                           ),
                   )),
-                const SizedBox(width: 25),,
+                const SizedBox(width: 25),
                 _buildSideButton(
                   Icons.image_outlined,
                   "Gallery",

@@ -68,7 +68,8 @@ class _PatientScheduleScreenState extends State<PatientScheduleScreen> {
               ),
             );
           }
-        }builder: (context, state) {
+        },
+        builder: (context, state) {
           if (state is MedicationLoading) {
             return const Center(child: CircularProgressIndicator());
           }
