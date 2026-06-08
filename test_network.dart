@@ -4,7 +4,7 @@ void main() async {
   final dio = Dio();
   
   print('--- Testing Render API (Weekly Adherence) ---');
-  final token = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwibmFtZWlkIjoiMTIzNDhmZDEtOTc5ZS00ZjhlLWEzODQtMWM4MjQ1NDBiZGU2IiwibmJmIjoxNzgwNjg0MTk1LCJleHAiOjE3ODMyNzYxOTUsImlhdCI6MTc4MDY4NDE5NX0.NguXwVz8gyxdVDbnOGQ1Q2W9z074d6brp-LJld6zwPVXFMzDFP_kwmgcIpiPmVsXFRtYPcC95CNq4nQZy42_iw";
+  final token = "";
 
   try {
     final response = await dio.get(

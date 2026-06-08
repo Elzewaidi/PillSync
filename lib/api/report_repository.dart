@@ -25,36 +25,8 @@ class ReportRepositoryImpl implements ReportRepository {
     
     if (connected) {
       try {
-        var reports = await remoteDataSource.getMedicineReports();
+        final reports = await remoteDataSource.getMedicineReports();
         debugPrint("📊 ReportRepo: Got ${reports.length} reports from data source");
-        
-        if (reports.isEmpty) {
-          debugPrint("📊 ReportRepo: Server returned empty reports. Injecting mock data fallback.");
-          reports = const [
-            ReportModel(
-              medicineId: "1",
-              medicineName: "بانادول (Panadol)",
-              weeklyTakenCount: 12,
-              weeklyMissedCount: 2,
-              adherencePercentage: 85.7,
-            ),
-            ReportModel(
-              medicineId: "2",
-              medicineName: "أسبرين (Aspirin)",
-              weeklyTakenCount: 5,
-              weeklyMissedCount: 1,
-              adherencePercentage: 83.3,
-            ),
-            ReportModel(
-              medicineId: "3",
-              medicineName: "فيتامين د (Vitamin D)",
-              weeklyTakenCount: 6,
-              weeklyMissedCount: 0,
-              adherencePercentage: 100.0,
-            ),
-          ];
-        }
-        
         return Right(reports);
       } catch (e) {
         debugPrint("📊 ReportRepo: CATCH → $e");
