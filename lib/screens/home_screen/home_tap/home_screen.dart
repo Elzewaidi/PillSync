@@ -1,30 +1,28 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/model/medication_model.dart';
 import 'package:pillsync/screens/home_screen/Meds_tab/Meds.dart';
+import 'package:pillsync/screens/home_screen/home_tap/My_schedule/My_schedule.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
-import 'package:pillsync/utils/app_styles.dart';
-import 'package:pillsync/screens/home_screen/Add_Meds_tab/Add_Meds.dart';
-import 'package:pillsync/screens/home_screen/Report_tab/Report.dart';
-import 'package:pillsync/screens/home_screen/settings_tab/settings_screen.dart';
-import 'package:pillsync/screens/home_screen/home_tap/My_schedule/My_schedule.dart';
-import 'package:pillsync/screens/home_screen/home_tap/Location_pharmacy/Location_pharmacy.dart';
 
-import 'package:pillsync/features/auth/domain/entities/user.dart';
-import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:pillsync/features/auth/presentation/bloc/auth_state.dart';
+import '../../../features/auth/domain/entities/user.dart';
+import '../../../l10n/app_localizations.dart';
+import '../Add_Meds_tab/Add_Meds.dart';
+import '../Report_tab/Report.dart';
+import '../settings_tab/settings_screen.dart';
+import 'Location_pharmacy/Location_pharmacy.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const String routeName = '/home';
+  static const String routeName = 'home_screen';
+  final User? user;
 
-  final User user;
-
-  const HomeScreen({super.key, required this.user});
+  const HomeScreen({Key? key, this.user}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -32,14 +30,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  Timer? _nextDoseTimer;
 
   @override
   void initState() {
     super.initState();
+    _nextDoseTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _nextDoseTimer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // We define pages dynamically to ensure they have access to latest state/context if needed
     final List<Widget> pages = [
       _buildHomeBody(),
       const MedsTabContent(),
@@ -49,10 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surfaceBackground,
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push(AddMedicationScreen.routeName),
-        backgroundColor: AppColors.primary,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddMedicationScreen()),
+          );
+        },
+        backgroundColor: AppColors.skyBlue,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 35, color: AppColors.white),
       ),
@@ -60,17 +74,46 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         notchMargin: 8.0,
-        color: AppColors.surface,
+        color: AppColors.white,
         child: SizedBox(
           height: 65,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(AppAssets.home_tab, "Home", 0),
-              _buildNavItem(AppAssets.Meds_tab, "Meds", 1),
-              _buildNavItem(null, "Add", 2),
-              _buildNavItem(AppAssets.report_tab, "Reports", 3),
-              _buildNavItem(AppAssets.settings_tab, "Settings", 4),
+              Expanded(
+                child: _buildNavItem(
+                  AppAssets.home_tab,
+                  AppLocalizations.of(context)!.home,
+                  0,
+                ),
+              ),
+              Expanded(
+                child: _buildNavItem(
+                  AppAssets.Meds_tab,
+                  AppLocalizations.of(context)!.meds,
+                  1,
+                ),
+              ),
+              Expanded(
+                child: _buildNavItem(
+                  null,
+                  AppLocalizations.of(context)!.add,
+                  2,
+                ),
+              ),
+              Expanded(
+                child: _buildNavItem(
+                  AppAssets.report_tab,
+                  AppLocalizations.of(context)!.reports,
+                  3,
+                ),
+              ),
+              Expanded(
+                child: _buildNavItem(
+                  AppAssets.settings_tab,
+                  AppLocalizations.of(context)!.settings,
+                  4,
+                ),
+              ),
             ],
           ),
         ),
@@ -81,51 +124,70 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildNavItem(dynamic icon, String label, int index) {
     bool isSelected = _selectedIndex == index;
-    Color activeColor = AppColors.primary;
-    Color inactiveColor = AppColors.textHint;
+    Color activeColor = AppColors.blue500;
+    Color inactiveColor = AppColors.grey;
 
     return InkWell(
       onTap: () {
         if (index == 2) {
-          context.push(AddMedicationScreen.routeName);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddMedicationScreen()),
+          );
         } else {
           setState(() => _selectedIndex = index);
         }
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (icon == null)
-            const SizedBox(height: 24)
-          else if (icon is String)
-            Image.asset(
-              icon,
-              width: 24,
-              height: 24,
-            )
-          else
-            Icon(
-              icon,
-              color: isSelected ? activeColor : inactiveColor,
-              size: 24,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (icon == null)
+              const SizedBox(height: 24)
+            else
+              if (icon is String)
+                Image.asset(
+                  icon,
+                  width: 24,
+                  height: 24,
+                  color: isSelected ? activeColor : inactiveColor,
+                )
+              else
+                Icon(
+                  icon,
+                  color: isSelected ? activeColor : inactiveColor,
+                  size: 24,
+                ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? activeColor : inactiveColor,
+              ),
             ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? activeColor : inactiveColor,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildHomeBody() {
-    return BlocBuilder<MedicationCubit, MedicationState>(
+    return BlocConsumer<MedicationCubit, MedicationState>(
+      listener: (context, state) {
+        if (state is MedicationActionSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         if (state is MedicationLoading) {
           return const Center(child: CircularProgressIndicator());
@@ -136,18 +198,8 @@ class _HomeScreenState extends State<HomeScreen> {
           medications = state.medications;
         }
 
-        // Calculate derived data
-        final nextMed = medications.firstWhere(
-          (m) => !m.isTaken,
-          orElse: () => medications.isNotEmpty
-              ? medications.first
-              : const Medication(
-                  name: "No Meds",
-                  time: "--",
-                  icon: Icons.check,
-                  color: AppColors.textHint,
-                ),
-        );
+        final cubit = context.watch<MedicationCubit>();
+        final nextMed = cubit.nextUpcomingMedication;
 
         final totalMeds = medications.length;
         final takenMeds = medications.where((m) => m.isTaken).length;
@@ -179,97 +231,90 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, authState) {
-        final user = authState is Authenticated ? authState.user : widget.user;
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
           children: [
-            Row(
+            CircleAvatar(
+              radius: 25,
+              backgroundImage: AssetImage(AppAssets.zewaidi),
+            ),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: AppColors.grey100,
-                  backgroundImage: (user.imageUrl != null && user.imageUrl!.isNotEmpty)
-                      ? NetworkImage(user.imageUrl!)
-                      : AssetImage(AppAssets.zewaidi) as ImageProvider,
-                  child: (user.imageUrl == null || user.imageUrl!.isEmpty)
-                      ? null
-                      : null,
+                Text(
+                  AppLocalizations.of(context)!.goodMorning,
+                  style: TextStyle(color: AppColors.grey, fontSize: 14),
                 ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Good morning,",
-                      style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-                    ),
-                    Text(
-                      user.fullName,
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                    ),
-                  ],
+                Text(
+                  "${widget.user?.fullName ?? "Zewaidi!"}!",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none_outlined, size: 28),
-            ),
           ],
-        );
-      },
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.notifications_none_outlined, size: 28),
+        ),
+      ],
     );
   }
 
-  Widget _buildNextMedicineCard(Medication med) {
-    if (med.name == "No Meds") {
+  Widget _buildNextMedicineCard(Medication? med) {
+    if (med == null) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: AppColors.primary,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(24),
         ),
         child: const Center(
           child: Text(
-            "All caught up! No medications pending.",
-            style: TextStyle(color: AppColors.white, fontSize: 16),
+            "All done for today! 🌟",
+            style: TextStyle(color: AppColors.blue500, fontSize: 16),
           ),
         ),
       );
     }
 
+    final countdownText = context.watch<MedicationCubit>().getCountdownText(
+      med.timeTotake,
+    );
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: AppColors.blue500,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Next Medicine",
-            style: TextStyle(color: AppColors.white, fontSize: 14),
+          Text(
+            AppLocalizations.of(context)!.nextMedicine,
+            style: TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                med.name,
+                med.medicineName,
                 style: const TextStyle(
                   color: AppColors.white,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Text(
-                "10mg",
-                style: TextStyle(color: AppColors.white, fontSize: 16),
+              Text(
+                med.dosage,
+                style: const TextStyle(color: AppColors.white, fontSize: 16),
               ),
             ],
           ),
@@ -279,10 +324,18 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.access_time, color: AppColors.white, size: 18),
               const SizedBox(width: 8),
               Text(
-                "Today at ${med.time}",
+                "${AppLocalizations.of(context)!.todayAt} ${med.time}",
                 style: const TextStyle(color: AppColors.white, fontSize: 14),
               ),
             ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            countdownText,
+            style: const TextStyle(
+              color: AppColors.white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -293,20 +346,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.1),
+            decoration: const BoxDecoration(
+              color: AppColors.blue100,
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.lightbulb_outline,
-              color: AppColors.info,
+              color: AppColors.blue500Alt,
             ),
           ),
           const SizedBox(width: 16),
@@ -314,16 +367,17 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Health Tip of the Day",
-                  style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.healthTipTitle,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Stay hydrated! Drinking water can help with medication absorption.",
+                  AppLocalizations.of(context)!.healthTipContent,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.textSecondary,
+                    color: AppColors.grey,
                     height: 1.4,
                   ),
                 ),
@@ -340,14 +394,14 @@ class _HomeScreenState extends State<HomeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         children: [
-          const Text(
-            "Overall Adherence",
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+          Text(
+            AppLocalizations.of(context)!.overallAdherence,
+            style: TextStyle(color: AppColors.grey, fontSize: 14),
           ),
           const SizedBox(height: 20),
           CircularPercentIndicator(
@@ -359,11 +413,11 @@ class _HomeScreenState extends State<HomeScreen> {
               style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primary,
+                color: AppColors.blue500,
               ),
             ),
-            progressColor: AppColors.primary,
-            backgroundColor: AppColors.grey100,
+            progressColor: AppColors.blue500,
+            backgroundColor: AppColors.slateSurface,
             circularStrokeCap: CircularStrokeCap.round,
             animation: true,
             animationDuration: 1500,
@@ -383,50 +437,63 @@ class _HomeScreenState extends State<HomeScreen> {
       childAspectRatio: 1.1,
       children: [
         _actionCard(
-          "Add\nMedication",
+          AppLocalizations.of(context)!.addMedication,
           AppAssets.add_icon,
-          AppColors.primary,
-          () => context.push(AddMedicationScreen.routeName),
+          AppColors.blue500,
+              () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => AddMedicationScreen()),
+            );
+          },
         ),
         _actionCard(
-          "My\nSchedule",
+          AppLocalizations.of(context)!.mySchedule,
           AppAssets.scedule_icon,
-          AppColors.primary,
-          () => context.push(PatientScheduleScreen.routeName),
+          AppColors.blue500,
+              () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => PatientScheduleScreen()),
+            );
+          },
         ),
         _actionCard(
-          "View\nReports",
+          AppLocalizations.of(context)!.viewReports,
           AppAssets.report_icon,
-          AppColors.primary,
-          () {
+          AppColors.blue500,
+              () {
             setState(() => _selectedIndex = 3);
           },
         ),
         _actionCard(
-          "Find\nPharmacy",
+          AppLocalizations.of(context)!.findPharmacy,
           AppAssets.location_icon,
-          AppColors.primary,
-          () => context.push(NearbyPharmaciesScreen.routeName),
+          AppColors.blue500,
+              () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NearbyPharmaciesScreen()),
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _actionCard(
-    String title,
-    dynamic icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
+  Widget _actionCard(String title,
+      dynamic icon,
+      Color color,
+      VoidCallback onTap,) {
     return InkWell(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColors.cardShadow,
+              color: AppColors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -449,7 +516,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -458,6 +525,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showMissedMedicationSheet(BuildContext context) {
+    // This sheet logic should ideally also be driven by state, but for now we keep it simple
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -465,7 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isDismissible: false,
       builder: (context) => Container(
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.white,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(30),
             topRight: Radius.circular(30),
@@ -480,7 +548,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 4,
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppColors.grey300,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -488,33 +556,33 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: AppColors.error.withOpacity(0.1),
+                  decoration: const BoxDecoration(
+                    color: AppColors.whiteRed,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.warning_amber_rounded,
-                    color: AppColors.error,
+                    color: AppColors.darkRed,
                     size: 28,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Missed Medication",
-                        style: TextStyle(
-                          color: AppColors.error,
+                        AppLocalizations.of(context)!.missedMedicationTitle,
+                        style: const TextStyle(
+                          color: AppColors.darkRed,
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        "You haven't taken these medications today",
+                        AppLocalizations.of(context)!.missedMedicationSubtitle,
                         style: TextStyle(
-                          color: AppColors.textSecondary,
+                          color: AppColors.darkGray,
                           fontSize: 13,
                         ),
                       ),
@@ -522,33 +590,33 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 IconButton(
-                  onPressed: () => context.pop(),
+                  onPressed: () => Navigator.pop(context),
                   icon: const Icon(
                     Icons.close,
                     size: 24,
-                    color: AppColors.textHint,
+                    color: AppColors.grey,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 25),
-            _buildMissedItem("Panadol", "9:00 AM"),
+            _buildMissedItem("Panadol", "9:00 AM"), // Still hardcoded
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () => context.pop(),
+                onPressed: () => Navigator.pop(context),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: AppColors.grey300),
+                  side: const BorderSide(color: AppColors.whiteGray_2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: const Text(
-                  "I'll Take It Later",
+                child: Text(
+                  AppLocalizations.of(context)!.takeLater,
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: AppColors.darkBlack,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -565,7 +633,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: AppColors.error.withOpacity(0.05),
+        color: AppColors.whiteRed,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -578,13 +646,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
-                  color: AppColors.textPrimary,
                 ),
               ),
               Text(
                 time,
                 style: const TextStyle(
-                  color: AppColors.error,
+                  color: AppColors.darkRed,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -592,17 +659,17 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           ElevatedButton(
-            onPressed: () => context.pop(),
+            onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
+              backgroundColor: AppColors.darkRed,
               minimumSize: const Size(double.infinity, 48),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 0,
             ),
-            child: const Text(
-              "Mark as Taken",
+            child: Text(
+              AppLocalizations.of(context)!.markAsTaken,
               style: TextStyle(
                 color: AppColors.white,
                 fontWeight: FontWeight.bold,

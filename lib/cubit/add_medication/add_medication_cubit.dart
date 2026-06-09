@@ -1,51 +1,34 @@
-import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
-import 'package:pillsync/api/api_manager.dart';
-import 'package:pillsync/api/medication_repository.dart';
-import 'package:pillsync/model/medication_model.dart';
-import 'package:pillsync/utils/app_colors.dart';
+import 'package:equatable/equatable.dart';
 
-import 'add_medication_state.dart';
+abstract class AddMedicationState extends Equatable {
+  const AddMedicationState();
 
-class AddMedicationCubit extends Cubit<AddMedicationState> {
-  AddMedicationCubit(this._repository) : super(AddMedicationInitial());
+  @override
+  List<Object?> get props => [];
+}
 
-  final MedicationRepository _repository;
+class AddMedicationInitial extends AddMedicationState {
+  const AddMedicationInitial();
+}
 
-  Future<void> addMedication({
-    required String medicineName,
-    required String dosage,
-    required String typeOfDrug,
-    required String frequency,
-    required String startDate,
-    required String endDate,
-    required String timeTotake,
-    required String instructions,
-  }) async {
-    emit(AddMedicationLoading());
-    try {
-      final medication = Medication(
-        id: '',
-        medicineName: medicineName,
-        dosage: dosage,
-        typeOfDrug: typeOfDrug,
-        frequency: frequency,
-        startDate: startDate,
-        endDate: endDate,
-        timeTotake: timeTotake,
-        instructions: instructions,
-        memberId: MedicationRepository.currentUserId,
-        isDeleted: false,
-        icon: Icons.medication,
-        color: AppColors.primary,
-      );
+class AddMedicationLoading extends AddMedicationState {
+  const AddMedicationLoading();
+}
 
-      await _repository.addMedication(medication);
-      emit(AddMedicationSuccess(medicineName));
-    } on NetworkException catch (e) {
-      emit(AddMedicationError(e.message));
-    } catch (e) {
-      emit(const AddMedicationError('Server Error: Please try again later.'));
-    }
-  }
+class AddMedicationSuccess extends AddMedicationState {
+  final String medicineName;
+
+  const AddMedicationSuccess(this.medicineName);
+
+  @override
+  List<Object?> get props => [medicineName];
+}
+
+class AddMedicationError extends AddMedicationState {
+  final String message;
+
+  const AddMedicationError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

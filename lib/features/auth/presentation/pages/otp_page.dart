@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:pillsync/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:pillsync/features/auth/presentation/widgets/custom_auth_button.dart';
 import 'package:pillsync/features/auth/presentation/widgets/custom_snack_bar.dart';
 import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
+
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -184,7 +184,7 @@ class _OTPPageState extends State<OTPPage> {
                       isError: false,
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     'Resend Code',
                     style: TextStyle(
                       color: AppColors.whiteBlue,

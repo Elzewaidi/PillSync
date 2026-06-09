@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pillsync/api/medication_repository.dart';
 import 'package:pillsync/model/medication_model.dart';
+
 import 'medication_state.dart';
 
 class MedicationCubit extends Cubit<MedicationState> {
@@ -43,6 +44,87 @@ class MedicationCubit extends Cubit<MedicationState> {
         return m;
       }).toList();
       emit(MedicationLoaded(updatedMeds));
+    }
+  }
+
+  Medication? get nextUpcomingMedication {
+    if (state is MedicationLoaded) {
+      final meds = (state as MedicationLoaded).medications;
+      if (meds.isEmpty) return null;
+
+      final untakenMeds = meds.where((m) => !m.isTaken).toList();
+      if (untakenMeds.isEmpty) return null;
+
+      final now = DateTime.now();
+      untakenMeds.sort((a, b) {
+        final aTime = _parseTimeString(a.timeTotake, now);
+        final bTime = _parseTimeString(b.timeTotake, now);
+        return aTime.compareTo(bTime);
+      });
+
+      for (var med in untakenMeds) {
+        final medTime = _parseTimeString(med.timeTotake, now);
+        if (medTime.isAfter(now)) {
+          return med;
+        }
+      }
+
+      return untakenMeds.first;
+    }
+    return null;
+  }
+
+  DateTime _parseTimeString(String timeStr, DateTime referenceDate) {
+    try {
+      final clean = timeStr.trim().toUpperCase();
+      int hour = 0;
+      int minute = 0;
+
+      if (clean.contains('AM') || clean.contains('PM')) {
+        final parts = clean.split(RegExp(r'\s+'));
+        final isPm = clean.contains('PM');
+        final timeParts = parts[0].split(':');
+        hour = int.parse(timeParts[0]);
+        minute = int.parse(timeParts[1]);
+        if (isPm && hour < 12) {
+          hour += 12;
+        } else if (!isPm && hour == 12) {
+          hour = 0;
+        }
+      } else {
+        final parts = clean.split(':');
+        hour = int.parse(parts[0]);
+        minute = int.parse(parts[1]);
+      }
+
+      return DateTime(
+        referenceDate.year,
+        referenceDate.month,
+        referenceDate.day,
+        hour,
+        minute,
+      );
+    } catch (_) {
+      return referenceDate;
+    }
+  }
+
+  String getCountdownText(String timeStr) {
+    final now = DateTime.now();
+    final medTime = _parseTimeString(timeStr, now);
+
+    if (medTime.isBefore(now)) {
+      return "Dose time has passed";
+    }
+
+    final difference = medTime.difference(now);
+    final hours = difference.inHours;
+    final minutes = difference.inMinutes % 60;
+
+    if (hours > 0) {
+      return "In $hours hr $minutes min";
+    } else {
+      return "In $minutes min";
     }
   }
 }

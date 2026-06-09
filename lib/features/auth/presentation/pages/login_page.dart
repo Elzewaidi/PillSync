@@ -8,6 +8,7 @@ import 'package:pillsync/features/auth/presentation/widgets/custom_text_form_fie
 import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
+
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -186,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
                             builder: (_) => const RegisterPage(),
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Sign Up',
                           style: TextStyle(
                             color: AppColors.whiteBlue,

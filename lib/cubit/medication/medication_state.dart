@@ -29,3 +29,12 @@ class MedicationError extends MedicationState {
   @override
   List<Object> get props => [message];
 }
+
+class MedicationActionSuccess extends MedicationState {
+  final String message;
+
+  const MedicationActionSuccess(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

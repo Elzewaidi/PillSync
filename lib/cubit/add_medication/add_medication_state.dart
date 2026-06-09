@@ -7,9 +7,13 @@ abstract class AddMedicationState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AddMedicationInitial extends AddMedicationState {}
+class AddMedicationInitial extends AddMedicationState {
+  const AddMedicationInitial();
+}
 
-class AddMedicationLoading extends AddMedicationState {}
+class AddMedicationLoading extends AddMedicationState {
+  const AddMedicationLoading();
+}
 
 class AddMedicationSuccess extends AddMedicationState {
   final String medicineName;
