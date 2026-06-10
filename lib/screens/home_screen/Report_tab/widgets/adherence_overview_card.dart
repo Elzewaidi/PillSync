@@ -53,14 +53,14 @@ class AdherenceOverviewCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                trend,
-                style: const TextStyle(
-                  color: AppColors.success,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                Text(
+                  trend,
+                  style: TextStyle(
+                    color: trend.startsWith('+') ? AppColors.success : AppColors.error,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
             ],
           ),
           const Text(
@@ -99,9 +99,9 @@ class AdherenceOverviewCard extends StatelessWidget {
     final double cleanAdherence = (adherencePercentage.isNaN || adherencePercentage.isInfinite)
         ? 0.0
         : adherencePercentage.clamp(0.0, 100.0);
+    
     // Generate spots based on the adherencePercentage to make the chart feel real
-    // Since we only have the current total, we simulate a 7-day trend
-    final double baseValue = cleanAdherence / 20.0; // Scale 0-100 to 0-5 for the chart
+    // We map the Y-axis from 0 to 100 for proper percentage display
     
     return LineChartData(
       gridData: const FlGridData(show: false),
@@ -115,17 +115,17 @@ class AdherenceOverviewCard extends StatelessWidget {
       minX: 0,
       maxX: 6,
       minY: 0,
-      maxY: 6,
+      maxY: 100,
       lineBarsData: [
         LineChartBarData(
           spots: [
-            FlSpot(0, baseValue * 0.8),
-            FlSpot(1, baseValue * 1.1),
-            FlSpot(2, baseValue * 0.9),
-            FlSpot(3, baseValue * 1.2),
-            FlSpot(4, baseValue * 1.0),
-            FlSpot(5, baseValue * 1.15),
-            FlSpot(6, baseValue),
+            FlSpot(0, (cleanAdherence * 0.8).clamp(0, 100)),
+            FlSpot(1, (cleanAdherence * 1.1).clamp(0, 100)),
+            FlSpot(2, (cleanAdherence * 0.9).clamp(0, 100)),
+            FlSpot(3, (cleanAdherence * 1.2).clamp(0, 100)),
+            FlSpot(4, (cleanAdherence * 1.0).clamp(0, 100)),
+            FlSpot(5, (cleanAdherence * 1.05).clamp(0, 100)),
+            FlSpot(6, cleanAdherence),
           ],
           isCurved: true,
           color: const Color(0xFF4FA8B8),

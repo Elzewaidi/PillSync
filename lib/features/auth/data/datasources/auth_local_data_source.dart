@@ -60,6 +60,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 @override
   Future<void> updateCachedUser(UserModel user) async {
+    await _ensureInitialized();
     await _userBox.put('current_user', user); 
   }
   @override

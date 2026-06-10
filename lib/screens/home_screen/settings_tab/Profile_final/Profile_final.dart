@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
 import 'package:pillsync/utils/app_styles.dart';
-
+import 'package:pillsync/injection_container.dart';
+import 'package:pillsync/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:pillsync/features/auth/data/models/user_model.dart';
 import 'package:pillsync/screens/home_screen/settings_tab/Edit_Profile_final/Edit_Profile_final.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,6 +19,44 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  UserModel? _user;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    try {
+      final localDataSource = sl<AuthLocalDataSource>();
+      final user = await localDataSource.getCachedUser();
+      setState(() {
+        _user = user;
+        _isLoading = false;
+      });
+    } catch (_) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  ImageProvider _getProfileImage(String? path) {
+    if (path == null || path.isEmpty) {
+      return const AssetImage(AppAssets.zewaidi);
+    }
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return NetworkImage(path);
+    }
+    final file = File(path);
+    if (file.existsSync()) {
+      return FileImage(file);
+    }
+    return const AssetImage(AppAssets.zewaidi);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,50 +71,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: AppColors.surface,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            const CircleAvatar(
-              radius: 60,
-              backgroundImage: AssetImage(AppAssets.zewaidi),
-            ),
-            const SizedBox(height: 15),
-            Text(
-              "Mohamed Elzewaidi",
-              style: AppStyles.font24BoldBlack,
-            ),
-            Text("zewaidi@gmail.com", style: TextStyle(color: AppColors.textSecondary)),
-            const SizedBox(height: 30),
-            _buildInfoTile(Icons.person_outline, "Full Name", "zewaidi"),
-            _buildInfoTile(Icons.email_outlined, "Email", "zewaidi@gmail.com"),
-            _buildInfoTile(Icons.phone_outlined, "Phone", "+20 114190948"),
-            _buildInfoTile(Icons.cake_outlined, "Age", "22"),
-            const SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: ElevatedButton(
-                onPressed: () => context.push(EditProfileScreen.routeName),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  minimumSize: const Size(double.infinity, 55),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: _getProfileImage(_user?.imageUrl),
                   ),
-                ),
-                child: const Text(
-                  "Edit Profile",
-                  style: TextStyle(
-                    color: AppColors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                  const SizedBox(height: 15),
+                  Text(
+                    _user?.fullName ?? "No Name",
+                    style: AppStyles.font24BoldBlack,
                   ),
-                ),
+                  Text(
+                    _user?.emailAddress ?? "No Email",
+                    style: const TextStyle(color: AppColors.textSecondary),
+                  ),
+                  const SizedBox(height: 30),
+                  _buildInfoTile(Icons.person_outline, "Full Name", _user?.fullName ?? "Not set"),
+                  _buildInfoTile(Icons.email_outlined, "Email", _user?.emailAddress ?? "Not set"),
+                  _buildInfoTile(Icons.phone_outlined, "Phone", _user?.phoneNumber ?? "Not set"),
+                  _buildInfoTile(Icons.cake_outlined, "Age", _user?.age?.toString() ?? "Not set"),
+                  _buildInfoTile(Icons.calendar_today_outlined, "Birth Date", _user?.birthDate ?? "Not set"),
+                  const SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await context.push(EditProfileScreen.routeName);
+                        _loadUser(); // Refresh profile on return
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        minimumSize: const Size(double.infinity, 55),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: const Text(
+                        "Edit Profile",
+                        style: TextStyle(
+                          color: AppColors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 

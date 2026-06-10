@@ -90,7 +90,19 @@ class PharmacyCard extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () => IntentUtils.makePhoneCall(data.phone),
+                  onPressed: data.phone == "غير متوفر"
+                      ? () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                "عذرًا، رقم هاتف هذه الصيدلية غير متوفر حاليًا.",
+                                style: TextStyle(fontSize: 14),
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+                        }
+                      : () => IntentUtils.makePhoneCall(data.phone),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     elevation: 0,

@@ -29,10 +29,12 @@ class _ReportsBodyState extends State<ReportsBody> {
   void didUpdateWidget(covariant ReportsBody oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.reports.isNotEmpty) {
-      if (selectedReport != null && !widget.reports.contains(selectedReport)) {
-        selectedReport = null;
-      } else if (selectedReport != null) {
-        selectedReport = widget.reports.firstWhere((r) => r == selectedReport);
+      if (selectedReport != null) {
+        final matchingReport = widget.reports.cast<ReportModel?>().firstWhere(
+              (r) => r?.medicineId == selectedReport?.medicineId,
+              orElse: () => null,
+            );
+        selectedReport = matchingReport;
       }
     } else {
       selectedReport = null;
@@ -67,6 +69,15 @@ class _ReportsBodyState extends State<ReportsBody> {
       displayName = selectedReport!.medicineName;
     }
 
+    String trendText;
+    if (displayAdherence >= 80) {
+      trendText = "+5%";
+    } else if (displayAdherence >= 50) {
+      trendText = "+2%";
+    } else {
+      trendText = "-3%";
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: Column(
@@ -85,7 +96,7 @@ class _ReportsBodyState extends State<ReportsBody> {
           const SizedBox(height: 16),
           AdherenceOverviewCard(
             adherencePercentage: displayAdherence,
-            trend: "+5%",
+            trend: trendText,
           ),
           const SizedBox(height: 32),
           Text(
@@ -107,7 +118,10 @@ class _ReportsBodyState extends State<ReportsBody> {
             ],
           ),
           const SizedBox(height: 24),
-          const AIInsightBox(),
+          AIInsightBox(
+            adherencePercentage: displayAdherence,
+            medicineName: displayName,
+          ),
           const SizedBox(height: 80),
         ],
       ),

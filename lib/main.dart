@@ -4,10 +4,12 @@ import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/api/medication_repository.dart';
 import 'package:pillsync/utils/di.dart';
 import 'package:pillsync/utils/app_routes.dart';
+import 'package:pillsync/l10n/app_localizations.dart';
+import 'package:pillsync/cubit/locale/locale_cubit.dart';
+import 'package:pillsync/custom_widgets/notification_handler.dart';
 
 import 'package:pillsync/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:pillsync/features/auth/presentation/bloc/auth_event.dart';
-import 'package:pillsync/features/auth/presentation/bloc/auth_state.dart';
 import 'package:pillsync/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:pillsync/injection_container.dart' as di;
 
@@ -37,32 +39,45 @@ class MyApp extends StatelessWidget {
           BlocProvider<ProfileBloc>(
             create: (context) => di.sl<ProfileBloc>(),
           ),
+          BlocProvider<LocaleCubit>(
+            create: (context) => LocaleCubit(),
+          ),
           BlocProvider<MedicationCubit>(
             create: (context) => MedicationCubit(
               context.read<MedicationRepository>(),
             )..loadMedications(),
           ),
         ],
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'PillSync',
-          theme: ThemeData(
-            useMaterial3: true,
-            primarySwatch: Colors.blue,
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color(0xFF00B4D8),
-              primary: const Color(0xFF00B4D8),
-              secondary: const Color(0xFF48CAE4),
-            ),
-            scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-            appBarTheme: const AppBarTheme(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              centerTitle: true,
-              iconTheme: IconThemeData(color: Colors.black),
-            ),
-          ),
-          routerConfig: AppRoutes.router,
+        child: BlocBuilder<LocaleCubit, Locale>(
+          builder: (context, locale) {
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              title: 'PillSync',
+              theme: ThemeData(
+                useMaterial3: true,
+                primarySwatch: Colors.blue,
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color(0xFF00B4D8),
+                  primary: const Color(0xFF00B4D8),
+                  secondary: const Color(0xFF48CAE4),
+                ),
+                scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+                appBarTheme: const AppBarTheme(
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  centerTitle: true,
+                  iconTheme: IconThemeData(color: Colors.black),
+                ),
+              ),
+              routerConfig: AppRoutes.router,
+              locale: locale,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              builder: (context, child) {
+                return NotificationHandler(child: child ?? const SizedBox());
+              },
+            );
+          },
         ),
       ),
     );

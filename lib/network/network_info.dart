@@ -23,7 +23,7 @@ class NetworkInfoImpl implements NetworkInfo {
       }
     } catch (e) {
       debugPrint("🔴 NetworkInfo: Connectivity check failed — $e");
-      return false;
+      return true;
     }
   }
 }

@@ -12,7 +12,7 @@ class AppColors {
   static const Color secondary = Color(0xFF48CAE4);
   static const Color darkPrimary = Color(0xFF0077B6);
   static const Color lightPrimary = Color(0xFF90E0EF);
-  static const Color whiteBlue = Color(0xff12B5ED);
+  static const Color whiteBlue = Color(0xFF12B5ED);
   static const surfaceBackground = Color(0xFFF8FAFC);
   static const skyBlue = Color(0xFF00B4D8);
   static const brightCyan = Color(0xFF48CAE4);

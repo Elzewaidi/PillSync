@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:pillsync/cubit/medication/medication_cubit.dart';
 import 'package:pillsync/cubit/medication/medication_state.dart';
 import 'package:pillsync/screens/home_screen/Meds_tab/Medications_Detialed/Medications_Detialed.dart';
-import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/model/medication_model.dart';
 
 import 'package:pillsync/utils/app_colors.dart';
@@ -41,9 +40,7 @@ class MedsTabContent extends StatelessWidget {
                       style: AppStyles.font20BoldBlack,
                     ),
                     IconButton(
-                      onPressed: () {
-                        // Alert logic
-                      },
+                      onPressed: () => _simulateNotification(context),
                       icon: const Icon(
                         Icons.notifications_none_outlined,
                         size: 28,
@@ -93,15 +90,60 @@ class MedsTabContent extends StatelessWidget {
   }
 
   Widget _buildNextDoseCard(BuildContext context) {
+    final cubit = context.watch<MedicationCubit>();
+    final nextMed = cubit.nextUpcomingMedication;
+
+    if (nextMed == null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.success.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "All set!",
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "No upcoming doses for today. Keep up the good work!",
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            const CircleAvatar(
+              backgroundColor: AppColors.success,
+              child: Icon(Icons.done_all, color: Colors.white),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final countdownText = cubit.getCountdownText(nextMed.timeTotake);
+
     return InkWell(
       onTap: () {
         context.push(
           MedicationDetailsScreen.routeName,
           extra: {
-            "name": "Aspirin",
-            "dosage": "10mg",
-            "frequency": "Daily",
-            "instructions": "Take after meals.",
+            "name": nextMed.name,
+            "dosage": nextMed.dosage.isNotEmpty ? nextMed.dosage : "10mg",
+            "frequency": nextMed.frequency.isNotEmpty ? nextMed.frequency : "Daily",
+            "instructions": nextMed.instructions.isNotEmpty ? nextMed.instructions : "Take as directed.",
             "history": [],
           },
         );
@@ -118,12 +160,12 @@ class MedsTabContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Next dose: Aspirin",
+                  "Next dose: ${nextMed.name}",
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "in 25 minutes",
+                  countdownText,
                   style: TextStyle(
                     color: AppColors.primary,
                     fontSize: 28,
@@ -135,7 +177,7 @@ class MedsTabContent extends StatelessWidget {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // Take now API logic
+                        context.read<MedicationCubit>().toggleMedication(nextMed);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -151,7 +193,7 @@ class MedsTabContent extends StatelessWidget {
                     const SizedBox(width: 12),
                     OutlinedButton(
                       onPressed: () {
-                        // Snooze logic
+                        // Snooze/dismiss logic
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: AppColors.primary),
@@ -173,7 +215,7 @@ class MedsTabContent extends StatelessWidget {
               top: 0,
               child: CircleAvatar(
                 backgroundColor: AppColors.primary,
-                child: Image.asset(AppAssets.Meds_2),
+                child: Icon(nextMed.icon, color: Colors.white),
               ),
             ),
           ],
@@ -189,9 +231,9 @@ class MedsTabContent extends StatelessWidget {
           MedicationDetailsScreen.routeName,
           extra: {
             "name": med.name,
-            "dosage": "10mg", // Placeholder
-            "frequency": "Once daily",
-            "instructions": "Take with water before breakfast.",
+            "dosage": med.dosage.isNotEmpty ? med.dosage : "10mg",
+            "frequency": med.frequency.isNotEmpty ? med.frequency : "Once daily",
+            "instructions": med.instructions.isNotEmpty ? med.instructions : "Take with water.",
             "history": [
               {"status": "Taken", "period": "Morning", "time": "08:05 AM"},
             ],
@@ -281,5 +323,27 @@ class MedsTabContent extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _simulateNotification(BuildContext context) {
+    final cubit = context.read<MedicationCubit>();
+    if (cubit.state is MedicationLoaded) {
+      final meds = (cubit.state as MedicationLoaded).medications;
+      final upcoming = meds.where((m) => !m.isTaken).toList();
+      if (upcoming.isNotEmpty) {
+        cubit.triggerNotification(upcoming.first);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "No remaining doses to simulate right now.",
+              style: TextStyle(fontSize: 14),
+            ),
+            backgroundColor: AppColors.info,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 }

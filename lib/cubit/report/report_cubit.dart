@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dartz/dartz.dart';
 import 'package:pillsync/api/report_repository.dart';
 import 'package:pillsync/error/failures.dart';
 import 'package:pillsync/cubit/report/report_state.dart';

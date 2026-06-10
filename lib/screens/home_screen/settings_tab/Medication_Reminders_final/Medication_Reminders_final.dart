@@ -6,6 +6,7 @@ import 'package:pillsync/model/medication_model.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pillsync/screens/home_screen/Add_Meds_tab/Add_Meds.dart';
 
 class MedicationRemindersScreen extends StatefulWidget {
   static const String routeName = '/medication-reminders';
@@ -83,7 +84,7 @@ class _MedicationRemindersScreenState extends State<MedicationRemindersScreen> {
                 right: 20,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // Navigate to Add Medication or similar
+                    context.push(AddMedicationScreen.routeName);
                   },
                   icon: Image.asset(AppAssets.add_1_remind),
                   label: const Text(

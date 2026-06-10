@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_ce/hive.dart';
 import 'package:pillsync/utils/app_colors.dart';
 import 'package:pillsync/utils/app_styles.dart';
 
@@ -13,12 +14,65 @@ class MissedAlertsScreen extends StatefulWidget {
 }
 
 class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
+  Box? _settingsBox;
+  bool _isLoading = true;
+
   bool enableAlerts = true;
   bool showMotivational = true;
-  final messageController = TextEditingController(
-    text: "You haven't taken these medications today",
-  );
+  final messageController = TextEditingController();
   final motivationalController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    messageController.addListener(_onTextChanged);
+    motivationalController.addListener(_onTextChanged);
+    _loadSettings();
+  }
+
+  void _onTextChanged() {
+    setState(() {});
+  }
+
+  @override
+  void dispose() {
+    messageController.removeListener(_onTextChanged);
+    motivationalController.removeListener(_onTextChanged);
+    messageController.dispose();
+    motivationalController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSettings() async {
+    _settingsBox = await Hive.openBox('settings');
+    setState(() {
+      enableAlerts = _settingsBox!.get('enable_missed_alerts', defaultValue: true);
+      showMotivational = _settingsBox!.get('missed_alerts_motivational_enabled', defaultValue: true);
+      messageController.text = _settingsBox!.get('missed_alerts_message', defaultValue: "You haven't taken these medications today");
+      motivationalController.text = _settingsBox!.get('missed_alerts_motivational_message', defaultValue: "Stay strong! Your health is your wealth. 💪");
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _saveSettings() async {
+    if (_settingsBox != null) {
+      await _settingsBox!.put('enable_missed_alerts', enableAlerts);
+      await _settingsBox!.put('missed_alerts_motivational_enabled', showMotivational);
+      await _settingsBox!.put('missed_alerts_message', messageController.text.trim());
+      await _settingsBox!.put('missed_alerts_motivational_message', motivationalController.text.trim());
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Missed dose alert settings saved successfully!"),
+            backgroundColor: AppColors.success,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        context.pop();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,50 +91,52 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
         backgroundColor: AppColors.surface,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _buildToggleCard(
-              "Enable Alerts",
-              "Get notified about missed medications",
-              enableAlerts,
-              (v) => setState(() => enableAlerts = v),
-            ),
-            const SizedBox(height: 20),
-            _buildInputLabel("Alert Time"),
-            _buildReadOnlyField(
-              "Time to check for missed medications at the end of the day",
-              "21:00",
-            ),
-            const SizedBox(height: 20),
-            _buildInputLabel("Alert Message"),
-            _buildCustomTextField(
-              messageController,
-              "Customize the message shown",
-            ),
-            const SizedBox(height: 20),
-            _buildToggleCard(
-              "Motivational Message",
-              "Show encouraging message in alerts",
-              showMotivational,
-              (v) => setState(() => showMotivational = v),
-            ),
-            if (showMotivational) ...[
-              const SizedBox(height: 10),
-              _buildCustomTextField(
-                motivationalController,
-                "Enter your motivational message...",
-                isSmall: true,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _buildToggleCard(
+                    "Enable Alerts",
+                    "Get notified about missed medications",
+                    enableAlerts,
+                    (v) => setState(() => enableAlerts = v),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildInputLabel("Alert Time"),
+                  _buildReadOnlyField(
+                    "Time to check for missed medications at the end of the day",
+                    "21:00",
+                  ),
+                  const SizedBox(height: 20),
+                  _buildInputLabel("Alert Message"),
+                  _buildCustomTextField(
+                    messageController,
+                    "Customize the message shown",
+                  ),
+                  const SizedBox(height: 20),
+                  _buildToggleCard(
+                    "Motivational Message",
+                    "Show encouraging message in alerts",
+                    showMotivational,
+                    (v) => setState(() => showMotivational = v),
+                  ),
+                  if (showMotivational) ...[
+                    const SizedBox(height: 10),
+                    _buildCustomTextField(
+                      motivationalController,
+                      "Enter your motivational message...",
+                      isSmall: true,
+                    ),
+                  ],
+                  const SizedBox(height: 30),
+                  _buildPreviewCard(),
+                  const SizedBox(height: 30),
+                  _buildSaveButton("Save Settings"),
+                ],
               ),
-            ],
-            const SizedBox(height: 30),
-            _buildPreviewCard(),
-            const SizedBox(height: 30),
-            _buildSaveButton("Save Settings"),
-          ],
-        ),
-      ),
+            ),
     );
   }
 
@@ -149,7 +205,8 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(            child: Text(
+          Expanded(
+            child: Text(
               sub,
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
@@ -208,9 +265,27 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            messageController.text,
-            style: const TextStyle(fontWeight: FontWeight.w500),
+            messageController.text.isEmpty
+                ? "You haven't taken these medications today"
+                : messageController.text,
+            style: const TextStyle(fontWeight: FontWeight.w500, color: AppColors.textPrimary),
           ),
+          if (showMotivational && motivationalController.text.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.grey200),
+              ),
+              child: Text(
+                motivationalController.text,
+                style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.textSecondary),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -218,7 +293,7 @@ class _MissedAlertsScreenState extends State<MissedAlertsScreen> {
 
   Widget _buildSaveButton(String text) {
     return ElevatedButton(
-      onPressed: () => context.pop(),
+      onPressed: _isLoading ? null : _saveSettings,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
         minimumSize: const Size(double.infinity, 55),

@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart' show IconData;
-import 'package:flutter/material.dart';
 
 class AppAssets {
   static const String logo_google = "assets/images/google_Icon.png";

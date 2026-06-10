@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pillsync/screens/intro_screens/intro_screen.dart';
 import 'package:pillsync/utils/app_assets.dart';
+import 'package:pillsync/injection_container.dart';
+import 'package:pillsync/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:pillsync/screens/home_screen/home_tap/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String routeName = '/splash';
@@ -15,11 +18,25 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
+    _checkAuthStatus();
+  }
+
+  Future<void> _checkAuthStatus() async {
+    await Future.delayed(const Duration(seconds: 3));
+    if (!mounted) return;
+    try {
+      final localDataSource = sl<AuthLocalDataSource>();
+      final hasUser = await localDataSource.hasCachedUser();
+      if (!mounted) return;
+      if (hasUser) {
+        context.go(HomeScreen.routeName);
+      } else {
         context.go(IntroScreen.routeName);
       }
-    });
+    } catch (_) {
+      if (!mounted) return;
+      context.go(IntroScreen.routeName);
+    }
   }
 
   @override

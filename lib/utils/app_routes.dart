@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pillsync/screens/auth/login/login_screen.dart';
@@ -100,7 +99,10 @@ class AppRoutes {
       ),
       GoRoute(
         path: ManualEntryScreen.routeName,
-        builder: (context, state) => ManualEntryScreen(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return ManualEntryScreen(prefilledData: extra);
+        },
       ),
       GoRoute(
         path: SettingsScreen.routeName,

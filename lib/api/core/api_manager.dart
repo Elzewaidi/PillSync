@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pillsync/injection_container.dart';
+import 'package:pillsync/features/auth/data/datasources/auth_local_data_source.dart';
+import 'package:pillsync/core/errors/exceptions.dart';
 import 'api_constants.dart';
 
 class ApiManager {
@@ -16,11 +19,16 @@ class ApiManager {
     
     // Interceptors for global logging, tokens, and monitoring requests easily
     _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
+      onRequest: (options, handler) async {
         debugPrint("🟢 API Request: [${options.method}] ${options.uri}");
-        if (ApiConstants.authToken.isNotEmpty) {
-          options.headers['Authorization'] = 'Bearer ${ApiConstants.authToken}';
-        }
+        try {
+          final token = await sl<AuthLocalDataSource>().getCachedToken();
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          } else if (ApiConstants.authToken.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer ${ApiConstants.authToken}';
+          }
+        } catch (_) {}
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -75,6 +83,9 @@ class ApiManager {
     } else if (e.response != null) {
       final statusCode = e.response?.statusCode;
       final body = e.response?.data;
+      if (statusCode == 401) {
+        throw UnauthorizedException(message: 'Unauthorized access. Please login again.');
+      }
       throw Exception('Server Error (Status: $statusCode) — $body');
     } else {
       throw Exception('Network Error: ${e.message}');

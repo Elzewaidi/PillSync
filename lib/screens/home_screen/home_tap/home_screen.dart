@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -10,8 +9,9 @@ import 'package:pillsync/screens/home_screen/Meds_tab/Meds.dart';
 import 'package:pillsync/screens/home_screen/home_tap/My_schedule/My_schedule.dart';
 import 'package:pillsync/utils/app_assets.dart';
 import 'package:pillsync/utils/app_colors.dart';
-
 import '../../../features/auth/domain/entities/user.dart';
+import '../../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../../features/auth/presentation/bloc/auth_state.dart';
 import '../../../l10n/app_localizations.dart';
 import '../Add_Meds_tab/Add_Meds.dart';
 import '../Report_tab/Report.dart';
@@ -19,7 +19,7 @@ import '../settings_tab/settings_screen.dart';
 import 'Location_pharmacy/Location_pharmacy.dart';
 
 class HomeScreen extends StatefulWidget {
-  static const String routeName = 'home_screen';
+  static const String routeName = '/home_screen';
   final User? user;
 
   const HomeScreen({Key? key, this.user}) : super(key: key);
@@ -30,20 +30,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  Timer? _nextDoseTimer;
 
-  @override
-  void initState() {
-    super.initState();
-    _nextDoseTimer = Timer.periodic(const Duration(minutes: 1), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _nextDoseTimer?.cancel();
-    super.dispose();
+  void _simulateNotification(BuildContext context) {
+    final cubit = context.read<MedicationCubit>();
+    if (cubit.state is MedicationLoaded) {
+      final meds = (cubit.state as MedicationLoaded).medications;
+      final upcoming = meds.where((m) => !m.isTaken).toList();
+      if (upcoming.isNotEmpty) {
+        cubit.triggerNotification(upcoming.first);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              "No remaining doses to simulate right now.",
+              style: TextStyle(fontSize: 14),
+            ),
+            backgroundColor: AppColors.info,
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -231,6 +238,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
+    // Use AuthBloc state for dynamic user data (reflects profile edits)
+    final authState = context.watch<AuthBloc>().state;
+    String userName = widget.user?.fullName ?? "User";
+    String? userImageUrl;
+    if (authState is Authenticated) {
+      userName = authState.user.fullName;
+      userImageUrl = authState.user.imageUrl;
+    }
+
+    ImageProvider profileImage;
+    if (userImageUrl != null && userImageUrl.isNotEmpty) {
+      if (userImageUrl.startsWith('http://') || userImageUrl.startsWith('https://')) {
+        profileImage = NetworkImage(userImageUrl);
+      } else {
+        final file = File(userImageUrl);
+        profileImage = file.existsSync()
+            ? FileImage(file)
+            : const AssetImage(AppAssets.zewaidi);
+      }
+    } else {
+      profileImage = const AssetImage(AppAssets.zewaidi);
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -238,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundImage: AssetImage(AppAssets.zewaidi),
+              backgroundImage: profileImage,
             ),
             const SizedBox(width: 12),
             Column(
@@ -249,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: TextStyle(color: AppColors.grey, fontSize: 14),
                 ),
                 Text(
-                  "${widget.user?.fullName ?? "Zewaidi!"}!",
+                  "$userName!",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
@@ -257,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () => _simulateNotification(context),
           icon: const Icon(Icons.notifications_none_outlined, size: 28),
         ),
       ],
@@ -524,6 +554,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ignore: unused_element
   void _showMissedMedicationSheet(BuildContext context) {
     // This sheet logic should ideally also be driven by state, but for now we keep it simple
     showModalBottomSheet(
