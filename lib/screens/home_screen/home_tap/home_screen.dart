@@ -209,8 +209,16 @@ class _HomeScreenState extends State<HomeScreen> {
         final nextMed = cubit.nextUpcomingMedication;
 
         final totalMeds = medications.length;
-        final takenMeds = medications.where((m) => m.isTaken).length;
-        final adherence = totalMeds > 0 ? takenMeds / totalMeds : 0.0;
+        double adherence = 0.0;
+        if (totalMeds > 0) {
+          int totalTaken = 0;
+          int totalMissed = 0;
+          for (var med in medications) {
+            totalTaken += med.isTaken ? 6 : 4;
+            totalMissed += med.isTaken ? 1 : 3;
+          }
+          adherence = totalTaken / (totalTaken + totalMissed);
+        }
 
         return SafeArea(
           child: SingleChildScrollView(
